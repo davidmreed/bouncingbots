@@ -1,0 +1,323 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		63DDF0B5155F5D900072879A /* bbsolve.c in Sources */ = {isa = PBXBuildFile; fileRef = 63DDF0B4155F5D900072879A /* bbsolve.c */; };
+		63DDF134155F8D8A0072879A /* fifo.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332C4B15508B200057FF21 /* fifo.c */; };
+		63DDF136155F8D8A0072879A /* move.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332C05155068870057FF21 /* move.c */; };
+		63DDF138155F8D8A0072879A /* board.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332BF5155046070057FF21 /* board.c */; };
+		63DDF13A155F8D8A0072879A /* solver.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332BFB155065290057FF21 /* solver.c */; };
+		63DDF13C155F8D8A0072879A /* strings.c in Sources */ = {isa = PBXBuildFile; fileRef = 6382B8721551CD5000427073 /* strings.c */; };
+		63DDF13F155F8DA90072879A /* libbouncingbots.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63DDF12F155F8D6D0072879A /* libbouncingbots.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		63DDF13D155F8DA60072879A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 63DDF12E155F8D6D0072879A /* bouncingbots */;
+			remoteInfo = bouncingbots;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		63332BF4155046070057FF21 /* board.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = board.h; sourceTree = "<group>"; };
+		63332BF5155046070057FF21 /* board.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = board.c; sourceTree = "<group>"; };
+		63332BFA155065290057FF21 /* solver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = solver.h; sourceTree = "<group>"; };
+		63332BFB155065290057FF21 /* solver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = solver.c; sourceTree = "<group>"; };
+		63332C04155068870057FF21 /* move.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = move.h; sourceTree = "<group>"; };
+		63332C05155068870057FF21 /* move.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = move.c; sourceTree = "<group>"; };
+		63332C4A15508B200057FF21 /* fifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fifo.h; sourceTree = "<group>"; };
+		63332C4B15508B200057FF21 /* fifo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fifo.c; sourceTree = "<group>"; };
+		63332CB115510A800057FF21 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		6382B8711551CD5000427073 /* strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strings.h; sourceTree = "<group>"; };
+		6382B8721551CD5000427073 /* strings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strings.c; sourceTree = "<group>"; };
+		63DDF0A5155F5D620072879A /* bbsolve */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bbsolve; sourceTree = BUILT_PRODUCTS_DIR; };
+		63DDF0B4155F5D900072879A /* bbsolve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bbsolve.c; sourceTree = "<group>"; };
+		63DDF12F155F8D6D0072879A /* libbouncingbots.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbouncingbots.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		63DDF0A3155F5D620072879A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63DDF13F155F8DA90072879A /* libbouncingbots.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63DDF12D155F8D6D0072879A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* bouncingbots */ = {
+			isa = PBXGroup;
+			children = (
+				63DDF0AD155F5D750072879A /* Command-Line Tool */,
+				08FB7795FE84155DC02AAC07 /* Source */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = bouncingbots;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				63332CB115510A800057FF21 /* types.h */,
+				63332C4A15508B200057FF21 /* fifo.h */,
+				63332C4B15508B200057FF21 /* fifo.c */,
+				63332C04155068870057FF21 /* move.h */,
+				63332C05155068870057FF21 /* move.c */,
+				63332BF4155046070057FF21 /* board.h */,
+				63332BF5155046070057FF21 /* board.c */,
+				63332BFA155065290057FF21 /* solver.h */,
+				63332BFB155065290057FF21 /* solver.c */,
+				6382B8711551CD5000427073 /* strings.h */,
+				6382B8721551CD5000427073 /* strings.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				63DDF0A5155F5D620072879A /* bbsolve */,
+				63DDF12F155F8D6D0072879A /* libbouncingbots.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		63DDF0AD155F5D750072879A /* Command-Line Tool */ = {
+			isa = PBXGroup;
+			children = (
+				63DDF0B4155F5D900072879A /* bbsolve.c */,
+			);
+			name = "Command-Line Tool";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		63DDF0A4155F5D620072879A /* bbsolve */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63DDF0AE155F5D750072879A /* Build configuration list for PBXNativeTarget "bbsolve" */;
+			buildPhases = (
+				63DDF0A2155F5D620072879A /* Sources */,
+				63DDF0A3155F5D620072879A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				63DDF13E155F8DA60072879A /* PBXTargetDependency */,
+			);
+			name = bbsolve;
+			productName = bbsolve;
+			productReference = 63DDF0A5155F5D620072879A /* bbsolve */;
+			productType = "com.apple.product-type.tool";
+		};
+		63DDF12E155F8D6D0072879A /* bouncingbots */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63DDF140155F8DC70072879A /* Build configuration list for PBXNativeTarget "bouncingbots" */;
+			buildPhases = (
+				63DDF12C155F8D6D0072879A /* Sources */,
+				63DDF12D155F8D6D0072879A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = bouncingbots;
+			productName = bouncingbots;
+			productReference = 63DDF12F155F8D6D0072879A /* libbouncingbots.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "David Reed";
+			};
+			buildConfigurationList = 1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "bouncingbots" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* bouncingbots */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				63DDF0A4155F5D620072879A /* bbsolve */,
+				63DDF12E155F8D6D0072879A /* bouncingbots */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		63DDF0A2155F5D620072879A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63DDF0B5155F5D900072879A /* bbsolve.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63DDF12C155F8D6D0072879A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63DDF134155F8D8A0072879A /* fifo.c in Sources */,
+				63DDF136155F8D8A0072879A /* move.c in Sources */,
+				63DDF138155F8D8A0072879A /* board.c in Sources */,
+				63DDF13A155F8D8A0072879A /* solver.c in Sources */,
+				63DDF13C155F8D8A0072879A /* strings.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		63DDF13E155F8DA60072879A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 63DDF12E155F8D6D0072879A /* bouncingbots */;
+			targetProxy = 63DDF13D155F8DA60072879A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB914F08733D8E0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB915008733D8E0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		63DDF0A7155F5D640072879A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = bbsolve;
+			};
+			name = Debug;
+		};
+		63DDF0A8155F5D640072879A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = bbsolve;
+			};
+			name = Release;
+		};
+		63DDF130155F8D6D0072879A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = bouncingbots;
+			};
+			name = Debug;
+		};
+		63DDF131155F8D6D0072879A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = bouncingbots;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB914E08733D8E0010E9CD /* Build configuration list for PBXProject "bouncingbots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB914F08733D8E0010E9CD /* Debug */,
+				1DEB915008733D8E0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		63DDF0AE155F5D750072879A /* Build configuration list for PBXNativeTarget "bbsolve" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63DDF0A7155F5D640072879A /* Debug */,
+				63DDF0A8155F5D640072879A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		63DDF140155F8DC70072879A /* Build configuration list for PBXNativeTarget "bouncingbots" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63DDF130155F8D6D0072879A /* Debug */,
+				63DDF131155F8D6D0072879A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
