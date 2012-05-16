@@ -10,12 +10,14 @@
 #include "solver.h"
 #include "move.h"
 #include "strings.h"
+#include "array.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state);
-void print_move_set (bb_move_set *set);
+bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand);
+bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques);
 
 bb_solution_state *alloc_solution_state()
 {
@@ -61,11 +63,6 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 	
 	state = (bb_solution_state *)bb_fifo_pop(fifo);
 	while (state != NULL) {
-		
-		if (move_sets_equal(state->move_sequence, create_move_set_from_string("rrgugugl", 8))) {
-			printf("Found the right solution");
-		}
-		
 		if (!is_board_target(state->board, pawn, token)) {
 			if (depth <= 0) {
 				/* If we are searching for the shortest solution, we do not want to descend another ply if we've already found a shorter solution than is possible */
@@ -77,15 +74,14 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 				}
 			} else {
 				/* If we are searching to a set depth, continue if appropriate */
-				if (move_set_length(state->move_sequence) < depth) 
+				if (move_set_length(state->move_sequence) < depth) {
+					printf("Current depth = %d, max = %d, %lu states\n", move_set_length(state->move_sequence), depth, bb_fifo_length(fifo));
 					add_states_to_fifo(fifo, state);
+				}
 			}
 			dealloc_solution_state(state);
 		} else {
 			/* Found a solution. If it's the first we've found, it's also the shortest, but that doesn't mean it is the only solution of a given length. */
-			printf("We think we found a solution: ");
-			print_move_set(state->move_sequence);
-			printf("\n");
 			if (depth <= 0) {
 				/* Depth <= 0 means find the shortest solution(s) */
 				if (min_solution == -1) {
@@ -130,15 +126,72 @@ void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state)
 				
 				bb_apply_move(ns->board, bb_create_move(p, dir));
 				move_set_add_move(ns->move_sequence, bb_create_move(p, dir));
-								
-				//printf("Adding solution state with move sequence: ");
-				//print_move_set(ns->move_sequence);
-				//printf("\n");
-								
+																
 				bb_fifo_append(fifo, ns);
 			}
 		}
 	}
+}
+
+bb_array *winnow_solutions(bb_fifo *solutions)
+{
+	bb_array *unique_solutions = bb_array_alloc(10);
+	bb_solution_state *state;
+	
+	state = bb_fifo_pop(solutions);
+	while (state != NULL) {
+		/* Choose each solution and eliminate all solutions longer than it which share the same skeleton (the same moves in the same order). These are trivial variations. */
+		/* This relies on the FIFO containing solutions in ascending order of length */
+		if (is_unique_solution(state->move_sequence, unique_solutions)) {
+			bb_move_set *set = copy_move_set(state->move_sequence);
+			bb_array_add_item(unique_solutions, set);
+		}
+		dealloc_solution_state(state);
+		state = bb_fifo_pop(solutions);
+	}
+	
+	return unique_solutions;
+}
+
+bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques)
+{
+	unsigned i;
+		
+	for (i = 0; i < bb_array_length(uniques); i++) {
+		if (is_trivial_variant(set, bb_array_get_item(uniques, i))) {
+			return BB_FALSE;
+		}
+	}
+	
+	return BB_TRUE;
+	
+}
+
+bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand)
+{
+	/* If set contains the same moves in the same sequence as comparand (regardless of intervening moves), it is considered a trivial variant and will be eliminated from the list */
+	/* length(comparand) <= length (set) */
+	
+	unsigned i, position = 0;
+	
+	for (i = 0; i < move_set_length(comparand); i++) {
+		bb_move move = move_set_get_move(comparand, i);
+		bb_bool found = BB_FALSE;
+		
+		/* iterate from the current position until the end of set looking for this move */
+		for (; position < move_set_length(set); position++) {
+			bb_move other = move_set_get_move(set, position);
+			
+			if ((other.pawn == move.pawn) && (other.direction == move.direction)) {
+				found = BB_TRUE;
+				break;
+			}
+		}
+		
+		if (!found) return BB_FALSE;
+	}
+	
+	return BB_TRUE;
 }
 
 void print_move_set (bb_move_set *set)

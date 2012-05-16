@@ -23,42 +23,50 @@ bb_fifo *bb_create_fifo()
 
 void bb_dealloc_fifo(bb_fifo *fifo)
 {
-	if (fifo->next != NULL)
-		bb_dealloc_fifo(fifo->next);
+	bb_fifo_item *item = bb_fifo_pop(fifo);
+	
+	while (item != NULL) {
+		free(item);
+		item = bb_fifo_pop(fifo);
+	}
+	
 	free(fifo);
 }
 
 void *bb_fifo_pop(bb_fifo *fifo)
 {
-	bb_fifo *top = fifo->next;
+	bb_fifo_item *top = fifo->next;
 	void *item = NULL;
 	
 	if (top != NULL) {
 		item = top->item;
 		fifo->next = top->next;
 		top->next = NULL;
-		bb_dealloc_fifo(top);
+		free(top);
+		fifo->length--;
 	}
 	
 	return item;
 }
 
+unsigned long bb_fifo_length(bb_fifo *fifo)
+{
+	return fifo->length;
+}
+
 void bb_fifo_append(bb_fifo *fifo, void *item)
 {
-	bb_fifo *last;
-	bb_fifo *new_last = bb_create_fifo();
+	bb_fifo_item *new_last = malloc(sizeof(bb_fifo_item));
 	
 	new_last->item = item;
 	new_last->next = NULL;
 	
-	last = fifo->next;
-	if (last != NULL) {
-		while (last->next != NULL)
-			last = last->next;
-	
-		last->next = new_last;
-	} else {
+	if (fifo->next == NULL) {
 		fifo->next = new_last;
+		fifo->last = new_last;
+	} else {
+		fifo->last->next = new_last;
+		fifo->last = new_last;
 	}
-
+	fifo->length++;
 }

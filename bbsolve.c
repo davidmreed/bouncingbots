@@ -11,6 +11,7 @@
 #include "board.h"
 #include "solver.h"
 #include "strings.h"
+#include "array.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdarg.h>
@@ -40,8 +41,9 @@ int main (int argc, char **argv)
 	bb_board *board;
 	bb_token token;
 	bb_pawn pawn;
-	bb_fifo *solutions;
-	bb_solution_state *state;
+	bb_array *solutions;
+	bb_fifo *fifo;
+	unsigned i;
 	
 	iferror (argc < 5, "bbsolve usage: bbsolve (depth) (pawn) (token) file\n");
 	
@@ -68,15 +70,20 @@ int main (int argc, char **argv)
 	token = strtol(argv[3], NULL, 0);
 	iferror((token <= 0) || (token > BB_MAX_TOKEN), "Token value %d is out of range", token);
 	
-	solutions = bb_find_solutions(board, pawn, token, depth);
-	state = (bb_solution_state *)bb_fifo_pop(solutions);
-	while (state != NULL) {
-		printf("Found solution ");
-		print_move_set(state->move_sequence);
-		printf("\n");
+	fifo = bb_find_solutions(board, pawn, token, depth);
+	solutions = winnow_solutions(fifo);
+	bb_dealloc_fifo(fifo);
+	
+	for (i = 0; i < bb_array_length(solutions); i++) {
+		bb_move_set *set = bb_array_get_item(solutions, i);
 		
-		dealloc_solution_state(state);
+		printf("Found solution ");
+		print_move_set(set);
+		printf("\n");
+		dealloc_move_set(set);
 	}
+	
+	bb_array_dealloc(solutions);
 	
 	return 0;
 	

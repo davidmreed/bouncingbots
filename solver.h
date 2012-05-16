@@ -13,6 +13,7 @@
 #include "board.h"
 #include "types.h"
 #include "fifo.h"
+#include "array.h"
 
 typedef struct {
 	bb_board *board;
@@ -24,6 +25,7 @@ bb_solution_state *copy_solution_state(bb_solution_state *state);
 void dealloc_solution_state(bb_solution_state *state);
 
 bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int depth);
+bb_array *winnow_solutions(bb_fifo *solutions);
 void print_move_set (bb_move_set *set);
 
 #endif
