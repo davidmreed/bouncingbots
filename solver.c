@@ -15,9 +15,37 @@
 #include <string.h>
 #include <stdio.h>
 
-void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state);
+void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_array *knownpositions);
 bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand);
 bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques);
+bb_bool is_known_position(bb_solution_state *state, bb_array *knownpositions);
+typedef unsigned char *bb_pawn_state;
+
+bb_pawn_state pawn_state_for_solution_state(bb_solution_state *board);
+
+bb_pawn_state pawn_state_for_solution_state(bb_solution_state *board)
+{
+	bb_pawn_state ps = malloc(sizeof(bb_pawn_state));
+	unsigned row, col;
+	bb_pawn pawn;
+
+	if (ps != NULL) {
+		memset(ps, 0, sizeof(bb_pawn_state));
+	
+		for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
+			locate_pawn(board->board, pawn, &row, &col);
+			ps[(pawn - 1) * 2] = (unsigned char)(row & 0xFF);
+			ps[(pawn - 1) * 2 + 1] = (unsigned char)(col & 0xFF);
+		}
+	}
+	
+	return ps;
+}
+
+bb_bool pawn_states_equal(bb_pawn_state one, bb_pawn_state other)
+{
+	return memcmp(one, other, 10) == 0 ? BB_TRUE : BB_FALSE;
+}
 
 bb_solution_state *alloc_solution_state()
 {
@@ -49,15 +77,20 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 {
 	/* Perform a breadth-first search for the shortest possible solution */
 	bb_fifo *fifo = bb_create_fifo();
+	bb_array *knownpositions = bb_array_alloc(16 * depth);
 	bb_fifo *solutions = bb_create_fifo();
 	bb_solution_state *state = alloc_solution_state();
 	int min_solution = -1;
+	bb_index i;
 	
 	state->board = copy_board(board);
 	state->move_sequence = alloc_move_set(10);
 	
+	/* Add the initial state to the known positions list */
+	bb_array_add_item(knownpositions, pawn_state_for_solution_state(state));
+	
 	/* Add to the fifo a board for each potential move for each pawn */
-	add_states_to_fifo(fifo, state);
+	add_states_to_fifo(fifo, state, knownpositions);
 	
 	dealloc_solution_state(state);
 	
@@ -68,15 +101,17 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 				/* If we are searching for the shortest solution, we do not want to descend another ply if we've already found a shorter solution than is possible */
 				if (min_solution > 0) {
 					if (move_set_length(state->move_sequence) < min_solution)
-						add_states_to_fifo(fifo, state);
+						add_states_to_fifo(fifo, state, knownpositions);
 				} else {
-					add_states_to_fifo(fifo, state);
+					add_states_to_fifo(fifo, state, knownpositions);
 				}
 			} else {
 				/* If we are searching to a set depth, continue if appropriate */
 				if (move_set_length(state->move_sequence) < depth) {
-					printf("Current depth = %d, max = %d, %lu states\n", move_set_length(state->move_sequence), depth, bb_fifo_length(fifo));
-					add_states_to_fifo(fifo, state);
+#ifdef DEBUG
+					printf("Current depth = %d, max = %d, %lu states\n", move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
+#endif
+					add_states_to_fifo(fifo, state, knownpositions);
 				}
 			}
 			dealloc_solution_state(state);
@@ -100,11 +135,18 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 		
 		state = (bb_solution_state *)bb_fifo_pop(fifo);
 	}
+	
+	/* Deallocate the knownpositions array */
+	
+	for (i = 0; i < bb_array_length(knownpositions); i++)
+		free(bb_array_get_item(knownpositions, i));
+	
+	bb_array_dealloc(knownpositions);
 
 	return solutions;
 }
 
-void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state)
+void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_array *knownpositions)
 {
 	bb_pawn p;
 	bb_direction dir;
@@ -126,8 +168,14 @@ void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state)
 				
 				bb_apply_move(ns->board, bb_create_move(p, dir));
 				move_set_add_move(ns->move_sequence, bb_create_move(p, dir));
-																
-				bb_fifo_append(fifo, ns);
+				
+				/* Before we add this to the state list, check to make sure we have not reached this position by other lines */
+				if (is_known_position(ns, knownpositions)) {
+					dealloc_solution_state(ns);
+				} else {
+					bb_fifo_append(fifo, ns);
+					bb_array_add_item(knownpositions, pawn_state_for_solution_state(ns));
+				}
 			}
 		}
 	}
@@ -155,7 +203,7 @@ bb_array *winnow_solutions(bb_fifo *solutions)
 
 bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques)
 {
-	unsigned i;
+	bb_index i;
 		
 	for (i = 0; i < bb_array_length(uniques); i++) {
 		if (is_trivial_variant(set, bb_array_get_item(uniques, i))) {
@@ -165,6 +213,24 @@ bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques)
 	
 	return BB_TRUE;
 	
+}
+
+bb_bool is_known_position(bb_solution_state *ss, bb_array *knownpositions)
+{
+	bb_pawn_state state = pawn_state_for_solution_state(ss);
+	bb_index i;
+
+	for (i = 0; i < bb_array_length(knownpositions); i++) {
+		bb_pawn_state ps = (bb_pawn_state)bb_array_get_item(knownpositions, i);
+
+		if (pawn_states_equal(ps, state)) {			
+			return BB_TRUE;
+		}
+	}
+	
+	free(state);
+	
+	return BB_FALSE;
 }
 
 bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand)
