@@ -79,7 +79,7 @@ int main (int argc, char **argv)
 		
 		printf("Found solution ");
 		print_move_set(set);
-		printf("\n");
+		printf(", length %d\n", move_set_length(set));
 		dealloc_move_set(set);
 	}
 	
