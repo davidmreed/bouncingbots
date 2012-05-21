@@ -49,7 +49,7 @@ void *bb_fifo_pop(bb_fifo *fifo)
 	return item;
 }
 
-unsigned long bb_fifo_length(bb_fifo *fifo)
+bb_index bb_fifo_length(bb_fifo *fifo)
 {
 	return fifo->length;
 }

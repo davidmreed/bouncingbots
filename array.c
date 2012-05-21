@@ -11,12 +11,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-bb_array *bb_array_alloc(unsigned length)
+bb_array *bb_array_alloc(bb_index length)
 {
 	bb_array *array = malloc(sizeof(bb_array));
 	
 	if (array != NULL) {
-		unsigned len = ((length == 0) ? 10 : length);
+		bb_index len = ((length == 0) ? 10 : length);
 		array->items = malloc(sizeof(void *) * len);
 		
 		if (array->items != NULL) {
@@ -69,16 +69,16 @@ void bb_array_dealloc(bb_array *set)
 	free(set);
 }
 
-unsigned bb_array_length(bb_array *set)
+bb_index bb_array_length(bb_array *set)
 {
 	return set->length;
 }
 
-void *bb_array_get_item(bb_array *set, unsigned index)
+void *bb_array_get_item(bb_array *set, bb_index index)
 {
 	if (index < set->length)
 		return set->items[index];
-	
+		
 	return NULL;
 }
 
@@ -88,14 +88,14 @@ void bb_array_add_item(bb_array *set, void *item)
 		set->items[set->length] = item;
 		set->length += 1;
 	} else {
-		set->items = realloc(set->items, sizeof(void *) * set->length + 10);
+		set->items = realloc(set->items, sizeof(void *) * (set->length + 10));
 		set->allocated += 10;
 		set->items[set->length] = item;
 		set->length += 1;
 	}
 }
 
-void array_remove_item(bb_array *array, unsigned index)
+void array_remove_item(bb_array *array, bb_index index)
 {
 	if (index < array->length) {
 		if (index < (array->length - 1)) {

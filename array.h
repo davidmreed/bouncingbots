@@ -13,17 +13,17 @@
 #include "types.h"
 
 typedef struct {
-	unsigned length, allocated;
+	bb_index length, allocated;
 	void **items;
 } bb_array;
 
-bb_array *bb_array_alloc(unsigned length);
+bb_array *bb_array_alloc(bb_index length);
 bb_array *bb_array_copy(bb_array *set);
 bb_bool bb_array_equal(bb_array *set, bb_array *other);
 void bb_array_dealloc(bb_array *set);
 
-unsigned bb_array_length(bb_array *set);
-void *bb_array_get_item(bb_array *set, unsigned index);
+bb_index bb_array_length(bb_array *set);
+void *bb_array_get_item(bb_array *set, bb_index index);
 void bb_array_add_item(bb_array *set, void *move);
 
 #endif

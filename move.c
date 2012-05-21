@@ -88,7 +88,7 @@ void move_set_add_move(bb_move_set *set, bb_move move)
 		set->moves[set->length] = move;
 		set->length += 1;
 	} else {
-		set->moves = realloc(set->moves, sizeof(bb_move) * set->length + 10);
+		set->moves = realloc(set->moves, sizeof(bb_move) * (set->length + 10));
 		set->allocated += 10;
 		set->moves[set->length] = move;
 		set->length += 1;

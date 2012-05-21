@@ -10,6 +10,8 @@
 #ifndef BB_TYPES_H
 #define BB_TYPES_H
 
+#include <sys/types.h>
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -19,6 +21,8 @@
 
 #define BB_MAX_DIMENSION 128
 #define BB_MAX_TOKEN     0xFF
+
+typedef u_int32_t bb_index;
 
 enum {
 	BB_TRUE = 1,

@@ -10,6 +10,8 @@
 #ifndef BB_FIFO_H
 #define BB_FIFO_H
 
+#include "types.h"
+
 struct bb_fifo_item {
 	struct bb_fifo_item *next;
 	void *item;
@@ -19,7 +21,7 @@ typedef struct bb_fifo_item bb_fifo_item;
 struct bb_fifo {
 	bb_fifo_item *next;
 	bb_fifo_item *last;
-	unsigned long length;
+	bb_index length;
 };
 typedef struct bb_fifo bb_fifo;
 
@@ -28,7 +30,7 @@ void bb_dealloc_fifo(bb_fifo *fifo);
 
 void *bb_fifo_pop(bb_fifo *fifo);
 void bb_fifo_append(bb_fifo *fifo, void *item);
-unsigned long bb_fifo_length(bb_fifo *fifo);
+bb_index bb_fifo_length(bb_fifo *fifo);
 
 
 #endif
