@@ -25,8 +25,8 @@ struct bb_fifo {
 };
 typedef struct bb_fifo bb_fifo;
 
-bb_fifo *bb_create_fifo();
-void bb_dealloc_fifo(bb_fifo *fifo);
+bb_fifo *bb_fifo_alloc();
+void bb_fifo_dealloc(bb_fifo *fifo);
 
 void *bb_fifo_pop(bb_fifo *fifo);
 void bb_fifo_append(bb_fifo *fifo, void *item);

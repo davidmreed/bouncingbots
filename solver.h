@@ -20,12 +20,12 @@ typedef struct {
 	bb_move_set *move_sequence;
 } bb_solution_state;
 
-bb_solution_state *alloc_solution_state();
-bb_solution_state *copy_solution_state(bb_solution_state *state);
-void dealloc_solution_state(bb_solution_state *state);
+bb_solution_state *bb_solution_state_alloc();
+bb_solution_state *bb_solution_state_copy(bb_solution_state *state);
+void bb_solution_state_dealloc(bb_solution_state *state);
 
 bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int depth);
-bb_array *winnow_solutions(bb_fifo *solutions);
-void print_move_set (bb_move_set *set);
+bb_array *bb_winnow_solutions(bb_fifo *solutions);
+void bb_print_move_set (bb_move_set *set);
 
 #endif

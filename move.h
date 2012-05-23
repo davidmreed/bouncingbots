@@ -22,14 +22,14 @@ typedef struct {
 	bb_move *moves;
 } bb_move_set;
 
-bb_move_set *alloc_move_set(unsigned length);
-bb_move_set *copy_move_set(bb_move_set *set);
-bb_bool move_sets_equal(bb_move_set *set, bb_move_set *other);
-void dealloc_move_set(bb_move_set *set);
+bb_move_set *bb_move_set_alloc(unsigned length);
+bb_move_set *bb_move_set_copy(bb_move_set *set);
+bb_bool bb_move_sets_equal(bb_move_set *set, bb_move_set *other);
+void bb_move_set_dealloc(bb_move_set *set);
 
-unsigned move_set_length(bb_move_set *set);
-bb_move move_set_get_move(bb_move_set *set, unsigned move);
-void move_set_add_move(bb_move_set *set, bb_move move);
+unsigned bb_move_set_length(bb_move_set *set);
+bb_move bb_move_set_get_move(bb_move_set *set, unsigned move);
+void bb_move_set_add_move(bb_move_set *set, bb_move move);
 
 bb_move bb_create_move(bb_pawn pawn, bb_direction dir);
 

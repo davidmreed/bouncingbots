@@ -8,6 +8,7 @@
  */
 
 #include "strings.h"
+#include "board.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -18,11 +19,11 @@ char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool);
 char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool);
 char *skip_whitespace (char *chrptr);
 
-bb_move_set *create_move_set_from_string(char *str, unsigned length)
+bb_move_set *bb_create_move_set_from_string(char *str, unsigned length)
 {
 	unsigned len = (length % 2 == 0) ? length : length - 1;
 	unsigned i;
-	bb_move_set *set = alloc_move_set(len / 2);
+	bb_move_set *set = bb_move_set_alloc(len / 2);
 	
 	for (i = 0; i < len; i+=2) {
 		char c = str[i];
@@ -39,7 +40,7 @@ bb_move_set *create_move_set_from_string(char *str, unsigned length)
 		else if (c == 's')
 			move.pawn = BB_PAWN_SILVER;
 		else {
-			dealloc_move_set(set);
+			bb_move_set_dealloc(set);
 			return NULL;
 		}
 		
@@ -53,19 +54,19 @@ bb_move_set *create_move_set_from_string(char *str, unsigned length)
 		else if (c == 'l')
 			move.direction = BB_DIRECTION_LEFT;
 		else {
-			dealloc_move_set(set);
+			bb_move_set_dealloc(set);
 			return NULL;
 		}
 		
-		move_set_add_move(set, move);
+		bb_move_set_add_move(set, move);
 	}
 	
 	return set;
 }
 
-void create_string_from_move_set(bb_move_set *set, unsigned char **out_str)
+void bb_create_string_from_move_set(bb_move_set *set, unsigned char **out_str)
 {
-	unsigned length = move_set_length(set), i;
+	unsigned length = bb_move_set_length(set), i;
 	char *pawns = " rbgys";
 	char *dirs = "urdl";
 	
@@ -73,12 +74,26 @@ void create_string_from_move_set(bb_move_set *set, unsigned char **out_str)
 	memset(*out_str, 0, length * 2 + 1);
 	
 	for (i = 0; i < length; i++) {
-		bb_move move = move_set_get_move(set, i);
+		bb_move move = bb_move_set_get_move(set, i);
 
 		*(*out_str + i * 2) = pawns[move.pawn]; 
 		*(*out_str + (i * 2) + 1) = dirs[move.direction];
 	}
 	*(*out_str + length * 2) = '\0';
+}
+
+void bb_print_move_set (bb_move_set *set)
+{
+	unsigned char *str;
+	
+	bb_create_string_from_move_set(set, &str);
+	
+	if (str != NULL) {
+		printf("%s", str);
+		free(str);
+	} else {
+		printf("Move set %p yielded a NULL string representation.\n", set);
+	}
 }
 
 char *skip_whitespace (char *chrptr) 
@@ -130,6 +145,7 @@ char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool)
 			else if (*cur == '_') out_cell->wall_bottom = BB_WALL;
 			else if (isdigit(*cur)) { cur = read_token(cur, out_cell, &success); cur--; }
 			else if (*cur == '/') out_cell->reflector_direction = BB_45_DEGREES;
+			else if (*cur == '\\') out_cell->reflector_direction = BB_135_DEGREES;
 			else if (*cur == 'r') out_cell->reflector = BB_REFLECTOR_RED;
 			else if (*cur == 'b') out_cell->reflector = BB_REFLECTOR_BLUE;
 			else if (*cur == 'g') out_cell->reflector = BB_REFLECTOR_GREEN;
@@ -154,7 +170,7 @@ char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool)
 	return cur;
 }
 
-bb_board *create_board_from_string(char *str)
+bb_board *bb_create_board_from_string(char *str)
 {
 	bb_board *board;
 	long width, height, i, j;
@@ -166,20 +182,28 @@ bb_board *create_board_from_string(char *str)
 	if ((width < 1) || (height < 1) || (width > BB_MAX_DIMENSION) || (height > BB_MAX_DIMENSION))
 		return NULL;
 	
-	board = alloc_board(width, height);
+	board = bb_board_alloc(width, height);
 	if (board == NULL) return NULL;
 	
 	cur = skip_whitespace(cur);
 	
 	for (i = 0; i < height; i++) {
-		for (j = 0; j < height; j++) {	
+		for (j = 0; j < width; j++) {	
 			bb_bool success;
+			bb_cell *cell = bb_get_cell(board, i, j);
 			
-			cur = read_cell(cur, get_cell(board, i, j), &success);
-			
+			cur = read_cell(cur, cell, &success);
+						
 			if (!success) {
-				dealloc_board(board);
+				bb_board_dealloc(board);
 				return NULL;
+			}
+			
+			/* Make sure the board knows where the pawn is */
+			if (cell->pawn != 0) {
+				board->pawns[cell->pawn - 1].cell = cell;
+				board->pawns[cell->pawn - 1].row = i;
+				board->pawns[cell->pawn - 1].col = j;
 			}
 		}
 	}

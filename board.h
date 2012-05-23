@@ -27,24 +27,26 @@ typedef struct {
 
 typedef struct {
 	unsigned width, height;
+	struct _pawnloc { bb_cell *cell; unsigned row, col; } pawns[5];
 	bb_cell *c;
 } bb_board;
 
-bb_board *alloc_board(unsigned width, unsigned height);
-bb_board *copy_board(bb_board *board);
-void dealloc_board(bb_board *board);
+bb_board *bb_board_alloc(unsigned width, unsigned height);
+bb_board *bb_board_copy(bb_board *board);
+void bb_board_dealloc(bb_board *board);
 
-void get_landing_point(bb_board *board, bb_pawn pawn, bb_direction dir, unsigned *out_row, unsigned *out_col);
-bb_cell *get_cell(bb_board *board, unsigned row, unsigned col);
-void get_collision_point(bb_board *board, bb_pawn pawn, bb_direction dir, unsigned *out_row, unsigned *out_col);
-unsigned get_collision_point_vertical(bb_board *board, bb_pawn pawn, unsigned col, unsigned row, bb_direction dir);
-unsigned get_collision_point_horizontal(bb_board *board, bb_pawn pawn, unsigned row, unsigned col, bb_direction dir);
+void bb_get_landing_point(bb_board *board, bb_pawn pawn, bb_direction dir, unsigned *out_row, unsigned *out_col);
+bb_cell *bb_get_cell(bb_board *board, unsigned row, unsigned col);
 
-bb_cell *locate_pawn(bb_board *board, bb_pawn pawn, unsigned *out_row, unsigned *out_col);
+bb_cell *bb_locate_pawn(bb_board *board, bb_pawn pawn, unsigned *out_row, unsigned *out_col);
+void bb_move_pawn(bb_board *board, bb_pawn pawn, unsigned row, unsigned col, bb_cell *cell);
+void bb_move_pawn_to_cell(bb_board *board, bb_pawn pawn, bb_cell *cell);
+void bb_move_pawn_to_location(bb_board *board, bb_pawn pawn, unsigned row, unsigned col);
+void bb_get_cell_location(bb_board *board, bb_cell *cell, unsigned *row, unsigned *col);
 
 void bb_apply_move_set(bb_board *board, bb_move_set *set);
 void bb_apply_move(bb_board *board, bb_move move);
 
-bb_bool is_board_target(bb_board *board, bb_pawn pawn, bb_token token);
+bb_bool bb_is_board_target(bb_board *board, bb_pawn pawn, bb_token token);
 
 #endif

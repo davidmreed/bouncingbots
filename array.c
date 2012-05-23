@@ -17,6 +17,7 @@ bb_array *bb_array_alloc(bb_index length)
 	
 	if (array != NULL) {
 		bb_index len = ((length == 0) ? 10 : length);
+		
 		array->items = malloc(sizeof(void *) * len);
 		
 		if (array->items != NULL) {
@@ -34,7 +35,7 @@ bb_array *bb_array_alloc(bb_index length)
 
 bb_array *bb_array_copy(bb_array *set) 
 {
-	bb_array *ns = bb_array_alloc(set->length);
+	bb_array *ns = bb_array_alloc(bb_array_length(set));
 	int i;
 	
 	for (i = 0; i < bb_array_length(set); i++) 
@@ -83,23 +84,21 @@ void *bb_array_get_item(bb_array *set, bb_index index)
 }
 
 void bb_array_add_item(bb_array *set, void *item)
-{
-	if (set->allocated >= set->length + 1) {
-		set->items[set->length] = item;
-		set->length += 1;
-	} else {
-		set->items = realloc(set->items, sizeof(void *) * (set->length + 10));
+{	
+	if (set->allocated < (set->length + 1)) {
+		set->items = realloc(set->items, sizeof(void *) * (set->allocated + 10));
 		set->allocated += 10;
-		set->items[set->length] = item;
-		set->length += 1;
 	}
+
+	set->items[set->length] = item;
+	set->length += 1;
 }
 
 void array_remove_item(bb_array *array, bb_index index)
 {
 	if (index < array->length) {
 		if (index < (array->length - 1)) {
-			memmove(array->items + index + 1, array->items + index, (array->length - 1) * sizeof(void *));
+			memmove(array->items + index + 1, array->items + index, (array->length - (index + 1)) * sizeof(void *));
 		}
 		
 		array->length -= 1;

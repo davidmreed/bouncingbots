@@ -59,7 +59,8 @@ int main (int argc, char **argv)
 	
 	iferror(read(fd, b, size) != size, "Could not read file.\n");
 	
-	board = create_board_from_string(b);
+	board = bb_create_board_from_string(b);
+	free(b);
 	iferror(board == NULL, "Could not parse file.\n");
 	
 	depth = strtol(argv[1], NULL, 0);
@@ -71,19 +72,20 @@ int main (int argc, char **argv)
 	iferror((token <= 0) || (token > BB_MAX_TOKEN), "Token value %d is out of range", token);
 	
 	fifo = bb_find_solutions(board, pawn, token, depth);
-	solutions = winnow_solutions(fifo);
-	bb_dealloc_fifo(fifo);
+	solutions = bb_winnow_solutions(fifo);
+	bb_fifo_dealloc(fifo);
 	
 	for (i = 0; i < bb_array_length(solutions); i++) {
 		bb_move_set *set = bb_array_get_item(solutions, i);
 		
 		printf("Found solution ");
-		print_move_set(set);
-		printf(", length %d\n", move_set_length(set));
-		dealloc_move_set(set);
+		bb_print_move_set(set);
+		printf(", length %d\n", bb_move_set_length(set));
+		bb_move_set_dealloc(set);
 	}
 	
 	bb_array_dealloc(solutions);
+	bb_board_dealloc(board);
 	
 	return 0;
 	

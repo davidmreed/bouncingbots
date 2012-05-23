@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-bb_fifo *bb_create_fifo()
+bb_fifo *bb_fifo_alloc()
 {
 	bb_fifo *fifo = malloc(sizeof(bb_fifo));
 	
@@ -21,7 +21,7 @@ bb_fifo *bb_create_fifo()
 	return fifo;
 }
 
-void bb_dealloc_fifo(bb_fifo *fifo)
+void bb_fifo_dealloc(bb_fifo *fifo)
 {
 	bb_fifo_item *item = bb_fifo_pop(fifo);
 	
