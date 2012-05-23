@@ -15,36 +15,118 @@
 #include <string.h>
 #include <stdio.h>
 
-void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_array *knownpositions);
+/* A position trie is composed of five levels of two-dimensional grids, each of whose elements are pointers to the next level down. The first level (trie->trie) represents the positions of the red pawn. If an element is non-NULL, we know a board state has been encountered with the red pawn in that position. The value of the element is a pointer to a table of blue pawn positions. Etc, five levels down. On the fifth level (silver pawn), elements are simply set to BB_TRUE to indicate the silver pawn's presence. 
+ Each level contains one extra element for positions in which the given pawn does not exist. It is the final element in each level.
+ */
+
+typedef struct {
+	unsigned width, height;
+	void **trie;
+} bb_position_trie;
+
+void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_position_trie *knownpositions);
 bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand);
 bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques);
-bb_bool is_known_position(bb_solution_state *state, bb_array *knownpositions);
-typedef unsigned char *bb_pawn_state;
 
-bb_pawn_state pawn_state_for_solution_state(bb_solution_state *board);
+bb_position_trie *bb_position_trie_alloc(unsigned width, unsigned height);
+bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board);
+void bb_position_trie_add(bb_position_trie *trie, bb_board *board);
+void _bb_position_trie_dealloc_level(void **level, unsigned width, unsigned height);
+void bb_position_trie_dealloc(bb_position_trie *trie);
 
-bb_pawn_state pawn_state_for_solution_state(bb_solution_state *board)
+bb_position_trie *bb_position_trie_alloc(unsigned width, unsigned height)
 {
-	bb_pawn_state ps = malloc(10);
-	unsigned row, col;
-	bb_pawn pawn;
-
-	if (ps != NULL) {
-		memset(ps, 0, 10);
+	bb_position_trie *trie = calloc(1, sizeof(bb_position_trie));
 	
-		for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
-			bb_locate_pawn(board->board, pawn, &row, &col);
-			ps[(pawn - 1) * 2] = (unsigned char)(row & 0xFF);
-			ps[(pawn - 1) * 2 + 1] = (unsigned char)(col & 0xFF);
+	if (trie != NULL) {
+		trie->width = width;
+		trie->height = height;
+		trie->trie = calloc(width * height + 1, sizeof(void *));
+				
+		if (trie->trie == NULL) {
+			free(trie);
+			return NULL;
 		}
 	}
 	
-	return ps;
+	return trie;
 }
 
-bb_bool pawn_states_equal(bb_pawn_state one, bb_pawn_state other)
+bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board)
 {
-	return memcmp(one, other, 10) == 0 ? BB_TRUE : BB_FALSE;
+	unsigned row, col;
+	bb_pawn pawn;
+	void **this_level = trie->trie;
+	
+	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
+		bb_locate_pawn(board, pawn, &row, &col);
+	
+		if (row == BB_NOT_FOUND) 
+			this_level = this_level[trie->width * trie->height];
+		else 
+			this_level = this_level[row * trie->width + col];
+	
+		if (this_level == NULL) return BB_FALSE;
+	}
+	
+	return BB_TRUE;
+}
+
+void bb_position_trie_add(bb_position_trie *trie, bb_board *board)
+{
+	unsigned row, col;
+	bb_pawn pawn;
+	void **this_level = trie->trie;
+	void **next_level;
+	
+	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
+		bb_locate_pawn(board, pawn, &row, &col);
+		
+		if (row == BB_NOT_FOUND) 
+			next_level = this_level[trie->width * trie->height];
+		else 
+			next_level = this_level[row * trie->width + col];
+		
+		if (next_level == NULL) {
+			if (pawn != BB_PAWN_SILVER) {
+				next_level = calloc(trie->width * trie->height + 1, sizeof(void *));
+			
+				if (row == BB_NOT_FOUND) 
+					this_level[trie->width * trie->height] = next_level;
+				else 
+					this_level[row * trie->width + col] = next_level;
+			} else {
+				/* For the silver pawn, we set one element to BB_TRUE to signify its position */
+				/* If the silver pawn is not in use, we set the not found element to BB_TRUE */
+				if (row == BB_NOT_FOUND) 
+					this_level[trie->height * trie->width] = (void *)BB_TRUE;
+				else 
+					this_level[row * trie->width + col] = (void *)BB_TRUE;
+				
+				next_level = NULL;
+			}
+
+		}
+		
+		this_level = next_level;
+	}
+}
+
+void _bb_position_trie_dealloc_level(void **level, unsigned width, unsigned height)
+{
+	unsigned i;
+	
+	for (i = 0; i < width * height + 1; i++)
+		if ((level[i] != NULL) && (level[i] != (void *)BB_TRUE))
+			_bb_position_trie_dealloc_level(level[i], width, height);
+	
+	free(level);
+}
+
+void bb_position_trie_dealloc(bb_position_trie *trie)
+{
+	_bb_position_trie_dealloc_level(trie->trie, trie->width, trie->height);
+	free(trie);
 }
 
 bb_solution_state *bb_solution_state_alloc()
@@ -77,17 +159,16 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 {
 	/* Perform a breadth-first search for the shortest possible solution */
 	bb_fifo *fifo = bb_fifo_alloc();
-	bb_array *knownpositions = bb_array_alloc(512);
 	bb_fifo *solutions = bb_fifo_alloc();
 	bb_solution_state *state = bb_solution_state_alloc();
 	int min_solution = -1;
-	bb_index i;
+	bb_position_trie *knownpositions = bb_position_trie_alloc(board->width, board->height);
 	
 	state->board = bb_board_copy(board);
 	state->move_sequence = bb_move_set_alloc(10);
 	
 	/* Add the initial state to the known positions list */
-	bb_array_add_item(knownpositions, pawn_state_for_solution_state(state));
+	bb_position_trie_add(knownpositions, state->board);
 	
 	/* Add to the fifo a board for each potential move for each pawn */
 	add_states_to_fifo(fifo, state, knownpositions);
@@ -104,7 +185,7 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 						add_states_to_fifo(fifo, state, knownpositions);
 				} else {
 #ifdef DEBUG
-					printf("Current depth = %d, max = %d, %lu states, %lu known positions (%lu allocated).\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo), (unsigned long)bb_array_length(knownpositions), (unsigned long)knownpositions->allocated);
+					printf("Current depth = %d, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
 #endif
 					add_states_to_fifo(fifo, state, knownpositions);
 				}
@@ -112,7 +193,7 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 				/* If we are searching to a set depth, continue if appropriate */
 				if (bb_move_set_length(state->move_sequence) < depth) {
 #ifdef DEBUG
-					printf("Current depth = %d, max = %d, %lu states, %lu known positions (%lu allocated).\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo), (unsigned long)bb_array_length(knownpositions), (unsigned long)knownpositions->allocated);
+					printf("Current depth = %d, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
 #endif
 					add_states_to_fifo(fifo, state, knownpositions);
 				}
@@ -142,18 +223,12 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn pawn, bb_token token, int de
 	}
 	
 	bb_fifo_dealloc(fifo);
-	
-	/* Deallocate the knownpositions array */
-	
-	for (i = 0; i < bb_array_length(knownpositions); i++)
-		free(bb_array_get_item(knownpositions, i));
-	
-	bb_array_dealloc(knownpositions);
+	bb_position_trie_dealloc(knownpositions);
 
 	return solutions;
 }
 
-void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_array *knownpositions)
+void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_position_trie *knownpositions)
 {
 	bb_pawn p;
 	bb_direction dir;
@@ -180,11 +255,11 @@ void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_array *known
 				bb_move_set_add_move(ns->move_sequence, bb_create_move(p, dir));
 				
 				/* Before we add this to the state list, check to make sure we have not reached this position by other lines */
-				if (is_known_position(ns, knownpositions)) {
+				if (bb_position_trie_contains(knownpositions, ns->board)) {
 					bb_solution_state_dealloc(ns);
 				} else {
 					bb_fifo_append(fifo, ns);
-					bb_array_add_item(knownpositions, pawn_state_for_solution_state(ns));
+					bb_position_trie_add(knownpositions, ns->board);
 				}
 			}
 		}
@@ -223,25 +298,6 @@ bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques)
 	
 	return BB_TRUE;
 	
-}
-
-bb_bool is_known_position(bb_solution_state *ss, bb_array *knownpositions)
-{
-	bb_pawn_state state = pawn_state_for_solution_state(ss);
-	bb_index i;
-
-	for (i = 0; i < bb_array_length(knownpositions); i++) {
-		bb_pawn_state ps = (bb_pawn_state)bb_array_get_item(knownpositions, i);
-
-		if (pawn_states_equal(ps, state)) {	
-			free(state);
-			return BB_TRUE;
-		}
-	}
-	
-	free(state);
-	
-	return BB_FALSE;
 }
 
 bb_bool is_trivial_variant(bb_move_set *set, bb_move_set *comparand)
