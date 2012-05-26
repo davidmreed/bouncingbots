@@ -44,7 +44,7 @@ int main (int argc, char **argv)
 	bb_array *solutions;
 	bb_fifo *fifo;
 	unsigned i;
-	
+		
 	iferror (argc < 5, "bbsolve usage: bbsolve (depth) (pawn) (token) file\n");
 	
 	fd = open(argv[4], O_RDONLY);	
