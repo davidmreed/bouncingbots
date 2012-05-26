@@ -149,7 +149,7 @@ void bb_get_landing_point(bb_board *board, bb_pawn pawn, bb_direction dir, unsig
 		return;
 	}
 	
-	if (c->reflector != 0) {
+	if ((c->reflector != 0) && (c->reflector != pawn)) {
 		bb_board *nb = bb_board_copy(board);
 		bb_cell *nc;
 		
