@@ -8,6 +8,7 @@
  */
 
 #include "position_trie.h"
+#include <stdlib.h>
 
 /* A position trie is composed of five levels of two-dimensional grids, each of whose elements are pointers to the next level down. The first level (trie->trie) represents the positions of the red pawn. If an element is non-NULL, we know a board state has been encountered with the red pawn in that position. The value of the element is a pointer to a table of blue pawn positions. Etc, five levels down. On the fifth level (silver pawn), elements are simply set to BB_TRUE to indicate the silver pawn's presence. 
  Each level contains one extra element for positions in which the given pawn does not exist. It is the final element in each level.
@@ -38,7 +39,7 @@ bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board)
 	unsigned row, col;
 	bb_pawn pawn;
 	void **this_level = trie->trie;
-	
+		
 	if ((board->width != trie->width) || (board->height != trie->height)) return BB_FALSE;
 	
 	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
