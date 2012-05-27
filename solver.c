@@ -134,8 +134,6 @@ void add_states_to_fifo(bb_fifo *fifo, bb_solution_state *state, bb_position_tri
 		for (dir = BB_DIRECTION_UP; dir <= BB_DIRECTION_LEFT; dir++) {
 			unsigned final_row, final_col;
 			
-			/* Somehow we are getting a crash here when the silver pawn's data gets corrupted */
-			/* And we end up thinking there is a silver pawn and trying to dereference a null pointer */
 			bb_get_landing_point(state->board, p, dir, &final_row, &final_col);
 			
 			if ((final_col != cur_col) || (final_row != cur_row)) {
