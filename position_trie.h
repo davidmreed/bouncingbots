@@ -7,20 +7,19 @@
  *
  */
 
-
-#ifndef BB_POSITION_TRIE_H
-#define BB_POSITION_TRIE_H
+#ifndef POSITION_TRIE_H
+#define POSITION_TRIE_H
 
 #include "types.h"
+#include "array.h"
 #include "board.h"
 
 typedef struct {
-	unsigned width, height;
-	void **trie;
+	unsigned char value;
+	bb_array *trie;
 } bb_position_trie;
 
-
-bb_position_trie *bb_position_trie_alloc(unsigned width, unsigned height);
+bb_position_trie *bb_position_trie_alloc();
 bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board);
 void bb_position_trie_add(bb_position_trie *trie, bb_board *board);
 void bb_position_trie_dealloc(bb_position_trie *trie);

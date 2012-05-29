@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		638B58AC157192A2004FE21E /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B58AA1571929C004FE21E /* test.c */; };
-		638B58B3157196E8004FE21E /* position_trie.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B58B2157196E8004FE21E /* position_trie.c */; };
 		638B58DF15719D0E004FE21E /* libbouncingbots.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63DDF12F155F8D6D0072879A /* libbouncingbots.a */; };
 		638B58E015719D3D004FE21E /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 639EB260156056EE002BEB3A /* array.c */; };
+		638B59191571F6A6004FE21E /* position_trie.c in Sources */ = {isa = PBXBuildFile; fileRef = 638B59181571F6A6004FE21E /* position_trie.c */; };
 		63DDF0B5155F5D900072879A /* bbsolve.c in Sources */ = {isa = PBXBuildFile; fileRef = 63DDF0B4155F5D900072879A /* bbsolve.c */; };
 		63DDF134155F8D8A0072879A /* fifo.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332C4B15508B200057FF21 /* fifo.c */; };
 		63DDF136155F8D8A0072879A /* move.c in Sources */ = {isa = PBXBuildFile; fileRef = 63332C05155068870057FF21 /* move.c */; };
@@ -25,7 +25,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 63DDF12E155F8D6D0072879A /* bouncingbots */;
+			remoteGlobalIDString = 63DDF12E155F8D6D0072879A;
 			remoteInfo = bouncingbots;
 		};
 		63DDF13D155F8DA60072879A /* PBXContainerItemProxy */ = {
@@ -51,8 +51,8 @@
 		6382B8721551CD5000427073 /* strings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strings.c; sourceTree = "<group>"; };
 		638B58A215719275004FE21E /* bbtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bbtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		638B58AA1571929C004FE21E /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
-		638B58B1157196E8004FE21E /* position_trie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = position_trie.h; sourceTree = "<group>"; };
-		638B58B2157196E8004FE21E /* position_trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = position_trie.c; sourceTree = "<group>"; };
+		638B59171571F6A6004FE21E /* position_trie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = position_trie.h; sourceTree = "<group>"; };
+		638B59181571F6A6004FE21E /* position_trie.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = position_trie.c; sourceTree = "<group>"; };
 		639EB25F156056EE002BEB3A /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		639EB260156056EE002BEB3A /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = array.c; sourceTree = "<group>"; };
 		63DDF0A5155F5D620072879A /* bbsolve */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bbsolve; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,8 +101,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				638B58B1157196E8004FE21E /* position_trie.h */,
-				638B58B2157196E8004FE21E /* position_trie.c */,
+				638B59171571F6A6004FE21E /* position_trie.h */,
+				638B59181571F6A6004FE21E /* position_trie.c */,
 				63332CB115510A800057FF21 /* types.h */,
 				63332C4A15508B200057FF21 /* fifo.h */,
 				63332C4B15508B200057FF21 /* fifo.c */,
@@ -255,7 +255,7 @@
 				63DDF138155F8D8A0072879A /* board.c in Sources */,
 				63DDF13A155F8D8A0072879A /* solver.c in Sources */,
 				63DDF13C155F8D8A0072879A /* strings.c in Sources */,
-				638B58B3157196E8004FE21E /* position_trie.c in Sources */,
+				638B59191571F6A6004FE21E /* position_trie.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,47 +10,68 @@
 #include "position_trie.h"
 #include <stdlib.h>
 
-/* A position trie is composed of five levels of two-dimensional grids, each of whose elements are pointers to the next level down. The first level (trie->trie) represents the positions of the red pawn. If an element is non-NULL, we know a board state has been encountered with the red pawn in that position. The value of the element is a pointer to a table of blue pawn positions. Etc, five levels down. On the fifth level (silver pawn), elements are simply set to BB_TRUE to indicate the silver pawn's presence. 
- Each level contains one extra element for positions in which the given pawn does not exist. It is the final element in each level.
- */
+bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t value);
 
-void _bb_position_trie_dealloc_level(void **level, unsigned width, unsigned height);
-
-bb_position_trie *bb_position_trie_alloc(unsigned width, unsigned height)
+bb_position_trie *bb_position_trie_alloc()
 {
-	bb_position_trie *trie = calloc(1, sizeof(bb_position_trie));
+	bb_position_trie *trie = calloc(sizeof(bb_position_trie), 1);
 	
 	if (trie != NULL) {
-		trie->width = width;
-		trie->height = height;
-		trie->trie = calloc(width * height + 1, sizeof(void *));
+		trie->trie = bb_array_alloc(1);
 		
 		if (trie->trie == NULL) {
 			free(trie);
-			return NULL;
+			trie = NULL;
 		}
 	}
 	
 	return trie;
 }
 
+bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t value) 
+{
+	bb_index i;
+	
+	for (i = 0; i < bb_array_length(trie->trie); i++) {
+		bb_position_trie *t = (bb_position_trie *)bb_array_get_item(trie->trie, i);
+		
+		if (t->value == value) {
+			return t;
+		}
+	}
+	
+	return NULL;
+}	
+
 bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board)
 {
 	unsigned row, col;
 	bb_pawn pawn;
-	void **this_level = trie->trie;
-		
-	if ((board->width != trie->width) || (board->height != trie->height)) return BB_FALSE;
+	bb_position_trie *current = trie, *next;
 	
 	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
+		next = NULL;
+		
 		bb_locate_pawn(board, pawn, &row, &col);
 		
-		if (row == BB_NOT_FOUND) 
-			this_level = this_level[trie->width * trie->height];
-		else 
-			this_level = this_level[row * trie->width + col];
+		row &= 0xFF; col &= 0xFF;
 		
-		if (this_level == NULL) return BB_FALSE;
+		next = _bb_position_trie_get_element(current, row);
+				
+		if (next == NULL) {
+			return BB_FALSE;
+		} else {
+			current = next; next = NULL;
+			/* We found the trie entry for the row (== current). Now search for the column. */
+
+			next = _bb_position_trie_get_element(current, col);
+			
+			if (next == NULL) {
+				return BB_FALSE;
+			} else {
+				current = next;
+			}
+		} 
 	}
 	
 	return BB_TRUE;
@@ -60,57 +81,46 @@ void bb_position_trie_add(bb_position_trie *trie, bb_board *board)
 {
 	unsigned row, col;
 	bb_pawn pawn;
-	void **this_level = trie->trie;
-	void **next_level;
+	bb_position_trie *current = trie, *next = NULL;
 	
-	if ((board->width != trie->width) || (board->height != trie->height)) return;
-	
-	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
+	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {		
 		bb_locate_pawn(board, pawn, &row, &col);
 		
-		if (row == BB_NOT_FOUND) 
-			next_level = this_level[trie->width * trie->height];
-		else 
-			next_level = this_level[row * trie->width + col];
+		row &= 0xFF; col &= 0xFF;
 		
-		if (next_level == NULL) {
-			if (pawn != BB_PAWN_SILVER) {
-				next_level = calloc(trie->width * trie->height + 1, sizeof(void *));
-				
-				if (row == BB_NOT_FOUND) 
-					this_level[trie->width * trie->height] = next_level;
-				else 
-					this_level[row * trie->width + col] = next_level;
-			} else {
-				/* For the silver pawn, we set one element to BB_TRUE to signify its position */
-				/* If the silver pawn is not in use, we set the not found element to BB_TRUE */
-				if (row == BB_NOT_FOUND) 
-					this_level[trie->height * trie->width] = (void *)BB_TRUE;
-				else 
-					this_level[row * trie->width + col] = (void *)BB_TRUE;
-				
-				next_level = NULL;
-			}
-			
+		next = _bb_position_trie_get_element(current, row);
+		
+		if (next == NULL) {
+			next = bb_position_trie_alloc();
+
+			next->value = row;
+			bb_array_add_item(current->trie, next);
 		}
 		
-		this_level = next_level;
-	}
-}
+		current = next; next = NULL;
+		
+		/* We found the trie entry for the row (== current). Now search for the column. */
 
-void _bb_position_trie_dealloc_level(void **level, unsigned width, unsigned height)
-{
-	unsigned i;
-	
-	for (i = 0; i < width * height + 1; i++)
-		if ((level[i] != NULL) && (level[i] != (void *)BB_TRUE))
-			_bb_position_trie_dealloc_level(level[i], width, height);
-	
-	free(level);
+		next = _bb_position_trie_get_element(current, col);
+		
+		if (next == NULL) {
+			next = bb_position_trie_alloc();
+
+			next->value = col;
+			bb_array_add_item(current->trie, next);
+		}
+		current = next; next = NULL;
+	}
 }
 
 void bb_position_trie_dealloc(bb_position_trie *trie)
 {
-	_bb_position_trie_dealloc_level(trie->trie, trie->width, trie->height);
+	unsigned i;
+	
+	for (i = 0; i < bb_array_length(trie->trie); i++) {
+		bb_position_trie_dealloc((bb_position_trie *)bb_array_get_item(trie->trie, i));
+	}
+	
+	bb_array_dealloc(trie->trie);
 	free(trie);
 }

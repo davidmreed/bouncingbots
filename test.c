@@ -74,7 +74,7 @@ void test_boards()
 
 void test_trie()
 {
-	bb_position_trie *trie = bb_position_trie_alloc(5, 5);
+	bb_position_trie *trie = bb_position_trie_alloc();
 	bb_board *board = bb_board_alloc(5, 5);
 	
 	bb_move_pawn_to_location(board, BB_PAWN_RED, 2, 3);
