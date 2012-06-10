@@ -20,8 +20,8 @@ typedef struct {
 } bb_position_trie;
 
 bb_position_trie *bb_position_trie_alloc();
-bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board);
-void bb_position_trie_add(bb_position_trie *trie, bb_board *board);
+bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_pawn_state ps);
+void bb_position_trie_add(bb_position_trie *trie, bb_pawn_state ps);
 void bb_position_trie_dealloc(bb_position_trie *trie);
 
 #endif

@@ -43,19 +43,17 @@ bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t
 	return NULL;
 }	
 
-bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board)
+bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_pawn_state ps)
 {
-	unsigned row, col;
+	bb_dimension row, col;
 	bb_pawn pawn;
 	bb_position_trie *current = trie, *next;
 	
 	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {
 		next = NULL;
 		
-		bb_locate_pawn(board, pawn, &row, &col);
-		
-		row &= 0xFF; col &= 0xFF;
-		
+		bb_get_pawn_location(ps, pawn, &row, &col);
+				
 		next = _bb_position_trie_get_element(current, row);
 				
 		if (next == NULL) {
@@ -77,16 +75,14 @@ bb_bool bb_position_trie_contains(bb_position_trie *trie, bb_board *board)
 	return BB_TRUE;
 }
 
-void bb_position_trie_add(bb_position_trie *trie, bb_board *board)
+void bb_position_trie_add(bb_position_trie *trie, bb_pawn_state ps)
 {
-	unsigned row, col;
+	bb_dimension row, col;
 	bb_pawn pawn;
 	bb_position_trie *current = trie, *next = NULL;
 	
 	for (pawn = BB_PAWN_RED; pawn <= BB_PAWN_SILVER; pawn++) {		
-		bb_locate_pawn(board, pawn, &row, &col);
-		
-		row &= 0xFF; col &= 0xFF;
+		bb_get_pawn_location(ps, pawn, &row, &col);
 		
 		next = _bb_position_trie_get_element(current, row);
 		

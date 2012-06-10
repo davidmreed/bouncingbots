@@ -16,7 +16,7 @@
 #include <ctype.h>
 
 char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool);
-char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool);
+char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn);
 char *skip_whitespace (char *chrptr);
 
 bb_move_set *bb_create_move_set_from_string(char *str, unsigned length)
@@ -123,7 +123,7 @@ char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool)
 	return cur;
 }
 
-char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool)
+char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn)
 {
 	char *cur = skip_whitespace(str);
 	bb_bool success = BB_TRUE;
@@ -133,11 +133,11 @@ char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool)
 		cur++;
 		while ((*cur != 0x00) && (*cur != '}') && success) {
 			if      (isspace(*cur)) ;
-			else if (*cur == 'R') out_cell->pawn = BB_PAWN_RED;
-			else if (*cur == 'B') out_cell->pawn = BB_PAWN_BLUE;
-			else if (*cur == 'G') out_cell->pawn = BB_PAWN_GREEN;
-			else if (*cur == 'Y') out_cell->pawn = BB_PAWN_YELLOW;
-			else if (*cur == 'S') out_cell->pawn = BB_PAWN_SILVER;
+			else if (*cur == 'R') *out_pawn = BB_PAWN_RED;
+			else if (*cur == 'B') *out_pawn = BB_PAWN_BLUE;
+			else if (*cur == 'G') *out_pawn = BB_PAWN_GREEN;
+			else if (*cur == 'Y') *out_pawn = BB_PAWN_YELLOW;
+			else if (*cur == 'S') *out_pawn = BB_PAWN_SILVER;
 			else if (*cur == '*') out_cell->block       = BB_WALL;
 			else if (*cur == '[') out_cell->wall_left   = BB_WALL;
 			else if (*cur == ']') out_cell->wall_right  = BB_WALL;
@@ -170,7 +170,7 @@ char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool)
 	return cur;
 }
 
-bb_board *bb_create_board_from_string(char *str)
+void bb_create_board_from_string(char *str, bb_board **b, bb_pawn_state ps)
 {
 	bb_board *board;
 	long width, height, i, j;
@@ -179,36 +179,44 @@ bb_board *bb_create_board_from_string(char *str)
 	width = strtol(str, &cur, 0);
 	height = strtol(cur, &cur, 0);
 	
-	if ((width < 1) || (height < 1) || (width > BB_MAX_DIMENSION) || (height > BB_MAX_DIMENSION))
-		return NULL;
+	if ((width < 1) || (height < 1) || (width > BB_MAX_DIMENSION) || (height > BB_MAX_DIMENSION)) {
+		*b = NULL;
+		return;
+	}
 	
 	board = bb_board_alloc(width, height);
-	if (board == NULL) return NULL;
+	if (board == NULL) {
+		*b = NULL;
+		return;
+	}
+	bb_init_pawn_state(ps);
 	
 	cur = skip_whitespace(cur);
 	
 	for (i = 0; i < height; i++) {
 		for (j = 0; j < width; j++) {	
 			bb_bool success;
+			bb_pawn pawn;
 			bb_cell *cell = bb_get_cell(board, i, j);
 			
-			cur = read_cell(cur, cell, &success);
+			pawn = 0;
+			cur = read_cell(cur, cell, &success, &pawn);
 						
 			if (!success) {
 				bb_board_dealloc(board);
-				return NULL;
+				*b = NULL;
+				return;
 			}
 			
-			/* Make sure the board knows where the pawn is */
-			if (cell->pawn != 0) {
-				board->pawns[cell->pawn - 1].cell = cell;
-				board->pawns[cell->pawn - 1].row = i;
-				board->pawns[cell->pawn - 1].col = j;
+			/* Make sure we record where the pawn is */
+			if (pawn != 0) {
+				ps[pawn - 1].row = i;
+				ps[pawn - 1].col = j;
 			}
 		}
 	}
 	
-	return board;
+	*b = board;
 }
 
 /*void create_string_from_board(bb_board *board, unsigned char **out_str)

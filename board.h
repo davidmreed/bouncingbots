@@ -26,27 +26,31 @@ typedef struct {
 } bb_cell;
 
 typedef struct {
-	unsigned width, height;
-	struct _pawnloc { bb_cell *cell; unsigned row, col; } pawns[5];
+	bb_dimension width, height;
 	bb_cell *c;
 } bb_board;
 
-bb_board *bb_board_alloc(unsigned width, unsigned height);
+typedef struct { bb_dimension row, col; } bb_pawn_state[5];
+
+bb_board *bb_board_alloc(bb_dimension width, bb_dimension height);
 bb_board *bb_board_copy(bb_board *board);
 void bb_board_dealloc(bb_board *board);
 
-void bb_get_landing_point(bb_board *board, bb_pawn pawn, bb_direction dir, unsigned *out_row, unsigned *out_col);
-bb_cell *bb_get_cell(bb_board *board, unsigned row, unsigned col);
+void bb_init_pawn_state(bb_pawn_state ps);
+void bb_copy_pawn_state(bb_pawn_state ps, bb_pawn_state nps);
 
-bb_cell *bb_locate_pawn(bb_board *board, bb_pawn pawn, unsigned *out_row, unsigned *out_col);
-void bb_move_pawn(bb_board *board, bb_pawn pawn, unsigned row, unsigned col, bb_cell *cell);
-void bb_move_pawn_to_cell(bb_board *board, bb_pawn pawn, bb_cell *cell);
-void bb_move_pawn_to_location(bb_board *board, bb_pawn pawn, unsigned row, unsigned col);
-void bb_get_cell_location(bb_board *board, bb_cell *cell, unsigned *row, unsigned *col);
+void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col);
+void bb_move_pawn_to_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension row, bb_dimension col);
 
-void bb_apply_move_set(bb_board *board, bb_move_set *set);
-void bb_apply_move(bb_board *board, bb_move move);
+void bb_apply_move_set(bb_board *board, bb_pawn_state ps, bb_move_set *set);
+void bb_apply_move(bb_board *board, bb_pawn_state ps, bb_move move);
 
-bb_bool bb_is_board_target(bb_board *board, bb_pawn pawn, bb_token token);
+bb_cell *bb_get_cell(bb_board *board, bb_dimension row, bb_dimension col);
+void bb_get_cell_location(bb_board *board, bb_cell *cell, bb_dimension *row, bb_dimension *col);
+bb_cell *bb_get_cell_for_pawn(bb_board *board, bb_pawn_state ps, bb_pawn pawn);
+void bb_get_pawn_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension *out_row, bb_dimension *out_col);
+bb_bool bb_is_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col);
+
+bb_bool bb_is_board_target(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_token token);
 
 #endif

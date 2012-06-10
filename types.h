@@ -17,11 +17,12 @@
 #endif
 
 #define BB_INLINE        inline
-#define BB_NOT_FOUND     0xFFFF
+#define BB_NOT_FOUND     0xFF
 
 #define BB_MAX_DIMENSION 128
 #define BB_MAX_TOKEN     0xFF
 
+typedef u_int8_t bb_dimension;
 typedef u_int32_t bb_index;
 
 enum {
