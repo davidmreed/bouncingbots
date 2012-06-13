@@ -66,6 +66,11 @@ void bb_init_pawn_state(bb_pawn_state ps)
 	}
 }
 
+bb_bool bb_pawn_states_equal(bb_pawn_state ps, bb_pawn_state nps)
+{
+	return (memcmp(ps, nps, sizeof(bb_pawn_state)) == 0) ? BB_TRUE : BB_FALSE;
+}
+			
 void bb_copy_pawn_state(bb_pawn_state ps, bb_pawn_state nps)
 {
 	memcpy(nps, ps, sizeof(bb_pawn_state));
@@ -80,8 +85,13 @@ bb_cell *bb_get_cell(bb_board *board, bb_dimension row, bb_dimension col)
 
 void bb_get_pawn_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension *out_row, bb_dimension *out_col)
 {
-	if (out_row != NULL) *out_row = ps[pawn - 1].row;
-	if (out_col != NULL) *out_col = ps[pawn - 1].col;
+	if ((pawn >= BB_PAWN_RED) && (pawn <= BB_PAWN_SILVER)) {
+		if (out_row != NULL) *out_row = ps[pawn - 1].row;
+		if (out_col != NULL) *out_col = ps[pawn - 1].col;
+	} else {
+		if (out_row != NULL) *out_row = BB_NOT_FOUND;
+		if (out_col != NULL) *out_col = BB_NOT_FOUND;
+	}
 }
 
 bb_direction reflect(bb_cell *c, bb_direction dir)

@@ -21,8 +21,7 @@ typedef struct {
 	unsigned block:1;
 	unsigned reflector:3;
 	unsigned reflector_direction:2;
-	unsigned pawn:6;
-	unsigned token:8;
+	unsigned token:6;
 } bb_cell;
 
 typedef struct {
@@ -38,6 +37,7 @@ void bb_board_dealloc(bb_board *board);
 
 void bb_init_pawn_state(bb_pawn_state ps);
 void bb_copy_pawn_state(bb_pawn_state ps, bb_pawn_state nps);
+bb_bool bb_pawn_states_equal(bb_pawn_state ps, bb_pawn_state nps);
 
 void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col);
 void bb_move_pawn_to_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension row, bb_dimension col);

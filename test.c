@@ -19,6 +19,7 @@
 
 void test_boards();
 void test_trie();
+void generate_random_position(bb_pawn_state ps);
 void test_solver();
 void test_strings();
 
@@ -74,32 +75,67 @@ void test_boards()
 	bb_board_dealloc(board);
 }
 
+void generate_random_position(bb_pawn_state ps)
+{
+	bb_dimension r;
+	unsigned i;
+	
+	for (i = 0; i < 5; i++) {
+		r = random() & 0x01FF;
+		ps[i].row = (r > 127) ? BB_NOT_FOUND : r;
+		r = random() & 0x01FF;
+		ps[i].col = (r > 127) ? BB_NOT_FOUND : r;
+	}
+}
+
 void test_trie()
 {
 	bb_position_trie *trie = bb_position_trie_alloc();
-	bb_pawn_state ps;
+	bb_array *array = bb_array_alloc(100000);
+	bb_index index;
+	bb_pawn_state *ps;
+			
+	/* Generate 100,000 random positions */
+	for (index = 0; index <= 100000; index++) {
+		ps = malloc(sizeof(bb_pawn_state));
+		generate_random_position(*ps);
+		bb_array_add_item(array, ps);
+		bb_position_trie_add(trie, *ps);
+	}
 	
-	bb_init_pawn_state(ps);
+	/* Check that each of the known positions returns BB_TRUE */
+	for (index = 0; index <= 100000; index++) {
+		ps = (bb_pawn_state *)bb_array_get_item(array, index);
+		
+		assert(bb_position_trie_contains(trie, *ps));
+	}
 	
-	bb_move_pawn_to_location(ps, BB_PAWN_RED, 2, 3);
-	bb_move_pawn_to_location(ps, BB_PAWN_BLUE, 4, 3);
-	bb_move_pawn_to_location(ps, BB_PAWN_YELLOW, 1, 0);
-	bb_position_trie_add(trie, ps);
-	assert(bb_position_trie_contains(trie, ps));
-	bb_move_pawn_to_location(ps, BB_PAWN_RED, 0, 0);
-	assert(!bb_position_trie_contains(trie, ps));
+	/* Check that 100,000 unknown random positions return BB_FALSE */
+	for (index = 0; index <= 100000; index++) {
+		generate_random_position(*ps);
+		
+		if (bb_position_trie_contains(trie, *ps)) {
+			bb_index k;
+			bb_bool found = BB_FALSE;
+			for (k = 0; k < bb_array_length(array); k++) {
+				bb_pawn_state *nps = (bb_pawn_state *)bb_array_get_item(array, index);
+				
+				found = bb_pawn_states_equal(*ps, *nps);
+				if (found) break;
+			}
+			
+			assert(!found);
+		}
+	}
 	
-	bb_move_pawn_to_location(ps, BB_PAWN_SILVER, 4, 4);
-	assert(!bb_position_trie_contains(trie, ps));
-	bb_position_trie_add(trie, ps);
-	assert(bb_position_trie_contains(trie, ps));
+	/* Deallocate the positions */
+	for (index = 0; index < bb_array_length(array); index++) {
+		ps = (bb_pawn_state *)bb_array_get_item(array, index);
+		free(ps);
+	}
 	
-	bb_move_pawn_to_location(ps, BB_PAWN_GREEN, 1, 1);
-	bb_position_trie_add(trie, ps);
-	assert(bb_position_trie_contains(trie, ps));
-	bb_position_trie_add(trie, ps);
-	assert(bb_position_trie_contains(trie, ps));
-
+	bb_array_dealloc(array);
+	
 	bb_position_trie_dealloc(trie);
 }
 
