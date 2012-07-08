@@ -76,10 +76,11 @@ unsigned bb_move_set_length(bb_move_set *set)
 
 bb_move bb_move_set_get_move(bb_move_set *set, unsigned move)
 {
+	bb_move none = {0, 0};
+
 	if (move < set->length)
 		return set->moves[move];
 	
-	bb_move none = {0, 0};
 	return none;
 }
 

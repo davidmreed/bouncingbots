@@ -94,7 +94,7 @@ void bb_print_move_set (bb_move_set *set)
 		printf("%s", str);
 		free(str);
 	} else {
-		printf("Move set %p yielded a NULL string representation.\n", set);
+		printf("Move set %p yielded a NULL string representation.\n", (void *)set);
 	}
 }
 
