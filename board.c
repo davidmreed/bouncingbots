@@ -21,7 +21,7 @@ bb_bool can_enter_cell_in_direction(bb_cell *cell, bb_direction dir);
 
 bb_board *bb_board_alloc(bb_dimension width, bb_dimension height)
 {
-	if ((width < BB_MAX_DIMENSION) && (height < BB_MAX_DIMENSION)) {
+	if ((width <= BB_MAX_DIMENSION) && (height <= BB_MAX_DIMENSION)) {
 		bb_board *board = malloc(sizeof(bb_board));
 		
 		if (board != NULL) {
@@ -261,6 +261,17 @@ bb_bool bb_is_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension 
 			return BB_TRUE;
 	
 	return BB_FALSE;
+}
+
+bb_pawn bb_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col)
+{
+	unsigned i;
+	
+	for (i = 0; i < 5; i++)
+		if ((ps[i].row == row) && (ps[i].col == col))
+			return i + 1;
+	
+	return 0;
 }
 
 void bb_get_cell_location(bb_board *board, bb_cell *cell, bb_dimension *row, bb_dimension *col)

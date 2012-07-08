@@ -50,6 +50,7 @@ void bb_get_cell_location(bb_board *board, bb_cell *cell, bb_dimension *row, bb_
 bb_cell *bb_get_cell_for_pawn(bb_board *board, bb_pawn_state ps, bb_pawn pawn);
 void bb_get_pawn_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension *out_row, bb_dimension *out_col);
 bb_bool bb_is_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col);
+bb_pawn bb_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col);
 
 bb_bool bb_is_board_target(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_token token);
 
