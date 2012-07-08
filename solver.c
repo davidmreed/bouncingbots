@@ -46,14 +46,15 @@ void bb_solution_state_dealloc(bb_solution_state *state)
 	free(state);
 }
 
-bb_fifo *bb_find_solutions(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth)
+bb_fifo *bb_find_solutions(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth)
 {
 	/* Perform a breadth-first search for the shortest possible solution */
 	bb_fifo *fifo = bb_fifo_alloc();
 	bb_fifo *solutions = bb_fifo_alloc();
 	bb_solution_state *state = bb_solution_state_alloc();
-	int min_solution = -1;
 	bb_position_trie *knownpositions = bb_position_trie_alloc();
+	bb_board *board = bb_board_copy(in_board); /* Copy the board for thread safety */
+	int min_solution = -1;
 	
 	bb_copy_pawn_state(ps, state->ps);
 	state->move_sequence = bb_move_set_alloc(10);
@@ -114,6 +115,7 @@ bb_fifo *bb_find_solutions(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_t
 	}
 	
 	bb_fifo_dealloc(fifo);
+	bb_board_dealloc(board);
 	bb_position_trie_dealloc(knownpositions);
 
 	return solutions;
