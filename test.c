@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include "types.h"
 #include "board.h"
 #include "solver.h"
@@ -82,9 +83,9 @@ void generate_random_position(bb_pawn_state ps)
 	
 	for (i = 0; i < 5; i++) {
 		r = random() & 0x01FF;
-		ps[i].row = (r > 127) ? BB_NOT_FOUND : r;
+		ps[i].row = (r >= BB_MAX_DIMENSION) ? BB_NOT_FOUND : r;
 		r = random() & 0x01FF;
-		ps[i].col = (r > 127) ? BB_NOT_FOUND : r;
+		ps[i].col = (r >= BB_MAX_DIMENSION) ? BB_NOT_FOUND : r;
 	}
 }
 
@@ -94,7 +95,7 @@ void test_trie()
 	bb_array *array = bb_array_alloc(100000);
 	bb_index index;
 	bb_pawn_state *ps;
-			
+	
 	/* Generate 100,000 random positions */
 	for (index = 0; index <= 100000; index++) {
 		ps = malloc(sizeof(bb_pawn_state));
@@ -135,7 +136,6 @@ void test_trie()
 	}
 	
 	bb_array_dealloc(array);
-	
 	bb_position_trie_dealloc(trie);
 }
 
@@ -194,14 +194,39 @@ void test_solver()
 
 void test_strings()
 {
+	char *board = "5 5\n{R}{}{}{}{2}\n{ }{}{}{}{ }\n{ }{}{}{}{ }\n{ }{/r}{}{}{ }\n{B}{G}{[}{}{S}";
+	char *newboard;
+	bb_board *b;
+	bb_pawn_state ps;
+	bb_pawn_state nps;
+	bb_board *nb;
+	
+	bb_create_board_from_string(board, &b, ps);
+	assert(b != NULL);
+	
+	bb_create_string_from_board(b, ps, &newboard);
+	assert(newboard != NULL);
+	
+	bb_create_board_from_string(newboard, &nb, nps);
+	assert(nb != NULL);
+	
+	/* Compare the board created from the inital string and the board created from the generated string */
+	assert(b->width == nb->width);
+	assert(b->height == nb->height);
+	assert(memcmp(b->c, nb->c, b->width * b->height * sizeof(bb_cell)) == 0);
+	assert(memcmp(ps, nps, sizeof(bb_pawn_state)) == 0);
+	
+	bb_board_dealloc(b);
+	bb_board_dealloc(nb);
+	free(newboard);
 }
 
 int main (int argc, char **argv)
 {
 	test_boards();
+	test_strings();
 	test_trie();
 	test_solver();
-	test_strings();
 
 	return 0;
 }

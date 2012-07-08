@@ -18,6 +18,8 @@
 char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool);
 char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn);
 char *skip_whitespace (char *chrptr);
+char *append_char(char *instr, char aChar, size_t *size, size_t *position);
+char *append_integer(char *instr, int anInt, size_t *size, size_t *position);
 
 bb_move_set *bb_create_move_set_from_string(char *str, unsigned length)
 {
@@ -219,12 +221,62 @@ void bb_create_board_from_string(char *str, bb_board **b, bb_pawn_state ps)
 	*b = board;
 }
 
-/*void create_string_from_board(bb_board *board, unsigned char **out_str)
+char *append_char(char *instr, char aChar, size_t *size, size_t *position)
 {
-	const unsigned size = 3 + 1 + 3 + 1 + board->width * board->height * 13 + board->height;
-	unsigned remaining = size, retval, i, j;
-	char *pawns = " rbgys";
-	char *b, *c;
+	char *ret = instr;
+	
+	if (instr == NULL) return NULL;
+	
+	if ((*size - *position) < 10) {
+		ret = realloc(instr, *size * 2);
+		*size *= 2;
+	}
+	
+	ret[*position] = aChar;
+	*position += 1;
+	
+	return ret;
+}
+
+char *append_integer(char *instr, int anInt, size_t *size, size_t *position)
+{
+	char *ret = instr;
+	int retval;
+	
+	if (instr == NULL) return NULL;
+	
+	if ((*size - *position) < 10) {
+		ret = realloc(instr, *size * 2);
+		*size *= 2;
+	}
+	
+	retval = snprintf(ret + *position, *size - *position, "%d", anInt);
+	
+	if (retval > *size - *position) {
+		ret = realloc(ret, *size * 2);
+		*size *= 2;
+		
+		retval = snprintf(ret + *position, *size - *position, "%d", anInt);
+
+		if (retval > *size - *position) {
+			return NULL;
+		}		
+	}
+	
+	*position += retval;
+	
+	return ret;
+}
+
+void bb_create_string_from_board(bb_board *board, bb_pawn_state ps, char **out_str)
+{
+	size_t size = 3 + 1 + 3 + 1 + board->width * board->height * 13 + board->height;
+	unsigned i, j;
+	size_t position = 0;
+	char *const pawns = " RBGYS";
+	char *const reflectors = " rbgys";
+	char *const reflector_directions = "/\\";
+	char *b;
 
 	if (out_str == NULL) return;
 
@@ -234,21 +286,35 @@ void bb_create_board_from_string(char *str, bb_board **b, bb_pawn_state ps)
 		return;
 	}
 	memset(b, 0, size);
-	c = b;
 	
-	retval = snprintf(c, remaining, "%d %d\n", board->width, board->height);
-	remaining -= retval; c += retval;
-	
+	b = append_integer(b, board->width, &size, &position);
+	b = append_char(b, ' ', &size, &position);
+	b = append_integer(b, board->height, &size, &position);
+	b = append_char(b, '\n', &size, &position);
+		
 	for (i = 0; i < board->height; i++) {
 		for (j = 0; j < board->width; j++) {
-			bb_cell *cell = get_cell(board, i, j);
+			bb_cell *cell = bb_get_cell(board, i, j);
 			
-			if (remaining > 0) { *c = '{'; remaining--; }
-			snprintf(c, remaining, "{%c%c%c%d", 
-					 (cell->wall_left ? '[' : ' '),
-					 (cell->wall_top  ? '^' : ' '),
-					 (cell->pawn != 0 ? pawns[cell->pawn] : ' '),
-					 (cell->token != 0 ? cell->token : ' '),
-					 (cell->wall_left ? '[' : ' '),
-
-}*/
+			b = append_char(b, '{', &size, &position);
+			
+			if (cell->block == BB_WALL)	      b = append_char(b, '*', &size, &position);
+			if (cell->wall_left == BB_WALL)   b = append_char(b, '[', &size, &position);
+			if (cell->wall_top == BB_WALL)	  b = append_char(b, '^', &size, &position);
+			if (bb_pawn_at_location(ps, i, j) != 0)			
+										      b = append_char(b, pawns[bb_pawn_at_location(ps, i, j)], &size, &position);
+			if (cell->token != 0)			  b = append_integer(b, cell->token, &size, &position);
+			if (cell->reflector != 0)		  b = append_char(b, reflectors[cell->reflector], &size, &position);
+			if (cell->reflector != 0)		  b = append_char(b, reflector_directions[cell->reflector_direction], &size, &position);
+			if (cell->wall_bottom == BB_WALL) b = append_char(b, '_', &size, &position);
+			if (cell->wall_right == BB_WALL)  b = append_char(b, ']', &size, &position);
+			
+			b = append_char(b, '}', &size, &position);
+		}
+		
+		b = append_char(b, '\n', &size, &position);
+	}
+	
+	*out_str = b;
+}
+					 
