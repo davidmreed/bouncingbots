@@ -308,8 +308,10 @@ bb_cell *bb_get_cell_for_pawn(bb_board *board, bb_pawn_state ps, bb_pawn pawn)
 
 void bb_move_pawn_to_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension row, bb_dimension col)
 {
-	ps[pawn - 1].row = row;
-	ps[pawn - 1].col = col;
+	if ((pawn > 0) && (pawn < 6)) {
+		ps[pawn - 1].row = row;
+		ps[pawn - 1].col = col;
+	}
 }
 
 bb_bool bb_is_board_target(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_token token) 
