@@ -15,13 +15,13 @@
 #include <limits.h>
 #include <ctype.h>
 
-char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool);
-char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn);
-char *skip_whitespace (char *chrptr);
+char *read_token(const char *str, bb_cell *out_cell, bb_bool *out_bool);
+char *read_cell(const char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn);
+char *skip_whitespace (const char *chrptr);
 char *append_char(char *instr, char aChar, size_t *size, size_t *position);
 char *append_integer(char *instr, int anInt, size_t *size, size_t *position);
 
-bb_move_set *bb_create_move_set_from_string(char *str, unsigned length)
+bb_move_set *bb_create_move_set_from_string(const char *str, unsigned length)
 {
 	unsigned len = (length % 2 == 0) ? length : length - 1;
 	unsigned i;
@@ -98,16 +98,16 @@ void bb_print_move_set (bb_move_set *set)
 	}
 }
 
-char *skip_whitespace (char *chrptr) 
+char *skip_whitespace (const char *chrptr) 
 {
-	char *aptr = chrptr; 
+	char *aptr = (char *)chrptr; 
 	
 	while ((*aptr != NULL) && isspace(*aptr)) aptr++;
 	
 	return aptr;
 }
 
-char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool)
+char *read_token(const char *str, bb_cell *out_cell, bb_bool *out_bool)
 {
 	long token;
 	char *cur;
@@ -125,7 +125,7 @@ char *read_token(char *str, bb_cell *out_cell, bb_bool *out_bool)
 	return cur;
 }
 
-char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn)
+char *read_cell(const char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pawn)
 {
 	char *cur = skip_whitespace(str);
 	bb_bool success = BB_TRUE;
@@ -172,7 +172,7 @@ char *read_cell(char *str, bb_cell *out_cell, bb_bool *out_bool, bb_pawn *out_pa
 	return cur;
 }
 
-void bb_create_board_from_string(char *str, bb_board **b, bb_pawn_state ps)
+void bb_create_board_from_string(const char *str, bb_board **b, bb_pawn_state ps)
 {
 	bb_board *board;
 	long width, height, i, j;
