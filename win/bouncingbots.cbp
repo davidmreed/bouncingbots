@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="bouncingbots" />
+		<Option pch_mode="2" />
+		<Option default_target="bbsolve" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="bouncingbots (Debug)">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\libbouncingbots" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\Debug\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="bouncingbots (Release)">
+				<Option platforms="Windows;" />
+				<Option output="bin\Release\libbouncingbots" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\Release\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="bbsolve (Release)">
+				<Option platforms="Windows;" />
+				<Option output="bin\bbsolve" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj" />
+				<Option external_deps="win\Release\libbouncingbots.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="bin\Release\libbouncingbots.a" />
+				</Linker>
+			</Target>
+			<Target title="bbtest (Debug)">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\bbtest" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin\Debug" />
+				<Option object_output="obj\Debug" />
+				<Option external_deps="win\Debug\libbouncingbots.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="bin\Debug\libbouncingbots.a" />
+				</Linker>
+			</Target>
+			<Target title="bbsolve (Debug)">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\bbsolve" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin\Debug" />
+				<Option object_output="obj\Debug" />
+				<Option external_deps="win\Debug\libbouncingbots.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="bin\Debug\libbouncingbots.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="Debug" targets="bouncingbots (Debug);bbtest (Debug);bbsolve (Debug);" />
+			<Add alias="Release" targets="bouncingbots (Release);bbsolve (Release);" />
+		</VirtualTargets>
+		<Unit filename="..\array.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\array.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\bbsolve.c">
+			<Option compilerVar="CC" />
+			<Option target="bbsolve (Release)" />
+			<Option target="bbsolve (Debug)" />
+		</Unit>
+		<Unit filename="..\board.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\board.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\fifo.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\fifo.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\move.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\move.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\position_trie.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\position_trie.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\solver.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\solver.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\strings.c">
+			<Option compilerVar="CC" />
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\strings.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Unit filename="..\test.c">
+			<Option compilerVar="CC" />
+			<Option target="bbtest (Debug)" />
+		</Unit>
+		<Unit filename="..\types.h">
+			<Option target="bouncingbots (Debug)" />
+			<Option target="bouncingbots (Release)" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
