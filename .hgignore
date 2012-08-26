@@ -1,0 +1,5 @@
+syntax: glob
+win/bin/
+win/obj/
+win/*.depend
+win/*.layout
