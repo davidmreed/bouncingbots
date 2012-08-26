@@ -44,9 +44,9 @@
 			</Target>
 			<Target title="bbsolve (Release)">
 				<Option platforms="Windows;" />
-				<Option output="bin\bbsolve" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="bin" />
-				<Option object_output="obj" />
+				<Option output="bin\Release\bbsolve" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin\Release" />
+				<Option object_output="obj\Release" />
 				<Option external_deps="win\Release\libbouncingbots.a;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
