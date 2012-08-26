@@ -10,7 +10,7 @@
 #include "position_trie.h"
 #include <stdlib.h>
 
-bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t value);
+bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, bb_position_trie_value value);
 
 bb_position_trie *bb_position_trie_alloc()
 {
@@ -28,7 +28,7 @@ bb_position_trie *bb_position_trie_alloc()
 	return trie;
 }
 
-bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t value) 
+bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, bb_position_trie_value value)
 {
 	bb_index i;
 	
@@ -110,9 +110,9 @@ void bb_position_trie_add(bb_position_trie *trie, bb_pawn_state ps)
 }
 
 void bb_position_trie_dealloc(bb_position_trie *trie)
-{
-	unsigned i;
-	
+{	
+	bb_index i;
+
 	for (i = 0; i < bb_array_length(trie->trie); i++) {
 		bb_position_trie_dealloc((bb_position_trie *)bb_array_get_item(trie->trie, i));
 	}
