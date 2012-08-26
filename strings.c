@@ -100,10 +100,10 @@ void bb_print_move_set (bb_move_set *set)
 
 char *skip_whitespace (const char *chrptr) 
 {
-	char *aptr = (char *)chrptr; 
+	char *aptr = (char *)chrptr;
 	
-	while ((*aptr != NULL) && isspace(*aptr)) aptr++;
-	
+	while ((*aptr != '\0') && isspace(*aptr)) aptr++;
+
 	return aptr;
 }
 
