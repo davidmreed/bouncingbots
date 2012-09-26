@@ -56,16 +56,18 @@ bb_fifo *bb_find_solutions(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, b
 	bb_board *board = bb_board_copy(in_board); /* Copy the board for thread safety */
 	int min_solution = -1;
 	
-	bb_copy_pawn_state(ps, state->ps);
-	state->move_sequence = bb_move_set_alloc(10);
+	if (bb_get_cell_for_token(board, token) != NULL) {
+		bb_copy_pawn_state(ps, state->ps);
+		state->move_sequence = bb_move_set_alloc(10);
 	
-	/* Add the initial state to the known positions list */
-	bb_position_trie_add(knownpositions, state->ps);
+		/* Add the initial state to the known positions list */
+		bb_position_trie_add(knownpositions, state->ps);
 	
-	/* Add to the fifo a board for each potential move for each pawn */
-	add_states_to_fifo(fifo, board, state, knownpositions);
+		/* Add to the fifo a board for each potential move for each pawn */
+		add_states_to_fifo(fifo, board, state, knownpositions);
 	
-	bb_solution_state_dealloc(state);
+		bb_solution_state_dealloc(state);
+	} /* If the token doesn't exist, the fifo will be empty and we'll go straight to cleanup */
 	
 	state = (bb_solution_state *)bb_fifo_pop(fifo);
 	while (state != NULL) {
