@@ -48,7 +48,13 @@ void bb_solution_state_dealloc(bb_solution_state *state)
 
 bb_fifo *bb_find_solutions(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth)
 {
+	return bb_find_solutions_mutex(in_board, ps, pawn, token, depth, NULL);
+}
+
+bb_fifo *bb_find_solutions_mutex(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth, pthread_mutex_t *mutex)
+{
 	/* Perform a breadth-first search for the shortest possible solution */
+	/* The mutex parameter allows for cancelling the search without killing the process. Allow this thread to acquire the lock and it will terminate itself */
 	bb_fifo *fifo = bb_fifo_alloc();
 	bb_fifo *solutions = bb_fifo_alloc();
 	bb_solution_state *state = bb_solution_state_alloc();
@@ -71,6 +77,27 @@ bb_fifo *bb_find_solutions(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, b
 	
 	state = (bb_solution_state *)bb_fifo_pop(fifo);
 	while (state != NULL) {
+		
+		/* Check the mutex. If we successfully gain the lock, we should cancel. */
+		if ((mutex != NULL) && (pthread_mutex_trylock(mutex) == 0)) {
+			/* Deallocate all the states */
+			
+			while (state != NULL) {
+				bb_solution_state_dealloc(state);
+				state = (bb_solution_state *)bb_fifo_pop(fifo);
+			}
+			
+			state = (bb_solution_state *)bb_fifo_pop(solutions);
+			while (state != NULL) {
+				bb_solution_state_dealloc(state);
+				state = (bb_solution_state *)bb_fifo_pop(solutions);				
+			}
+			bb_fifo_dealloc(solutions);
+			solutions = NULL;
+			
+			break;
+		}
+		
 		if (!bb_is_board_target(board, state->ps, pawn, token)) {
 			if (depth <= 0) {
 				/* If we are searching for the shortest solution, we do not want to descend another ply if we've already found a shorter solution than is possible */
