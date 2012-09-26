@@ -276,7 +276,7 @@ bb_pawn bb_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col
 
 void bb_get_cell_location(bb_board *board, bb_cell *cell, bb_dimension *row, bb_dimension *col)
 {
-	unsigned i, j;
+	bb_dimension i, j;
 	
 	for (i = 0; i < board->width; i++) {
 		for (j = 0; j < board->height; j++) {
@@ -305,6 +305,39 @@ bb_cell *bb_get_cell_for_pawn(bb_board *board, bb_pawn_state ps, bb_pawn pawn)
 	return NULL;
 }
 
+bb_cell *bb_get_cell_for_token(bb_board *board, bb_token token)
+{
+	bb_dimension row, col;
+	
+	bb_get_token_location(board, token, &row, &col);
+	
+	if ((row != BB_NOT_FOUND) && (col != BB_NOT_FOUND))
+		return bb_get_cell(board, row, col);
+	
+	return NULL;
+}
+
+void bb_get_token_location(bb_board *board, bb_token token, bb_dimension *out_row, bb_dimension *out_col)
+{
+	bb_dimension i, j;
+	
+	if (token != 0) {
+		for (i = 0; i < board->width; i++) {
+			for (j = 0; j < board->height; j++) {
+				bb_cell *c = bb_get_cell(board, j, i);
+				
+				if (c->token == token) {
+					if (out_row != NULL) *out_row = j;
+					if (out_col != NULL) *out_col = i;
+					return;
+				}
+			}
+		}
+	}
+	
+	if (out_row != NULL) *out_row = BB_NOT_FOUND;
+	if (out_col != NULL) *out_col = BB_NOT_FOUND;
+}
 
 void bb_move_pawn_to_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension row, bb_dimension col)
 {

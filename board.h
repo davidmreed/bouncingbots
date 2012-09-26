@@ -52,6 +52,9 @@ void bb_get_pawn_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension *out_row,
 bb_bool bb_is_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col);
 bb_pawn bb_pawn_at_location(bb_pawn_state ps, bb_dimension row, bb_dimension col);
 
+bb_cell *bb_get_cell_for_token(bb_board *board, bb_token token);
+void bb_get_token_location(bb_board *board, bb_token token, bb_dimension *out_row, bb_dimension *out_col);
+
 bb_bool bb_is_board_target(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_token token);
 
 #endif
