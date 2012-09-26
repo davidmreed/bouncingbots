@@ -10,6 +10,7 @@
 #ifndef BB_SOLVER_H
 #define BB_SOLVER_H
 
+#include <pthread.h>
 #include "board.h"
 #include "types.h"
 #include "fifo.h"
@@ -25,6 +26,7 @@ bb_solution_state *bb_solution_state_copy(bb_solution_state *state);
 void bb_solution_state_dealloc(bb_solution_state *state);
 
 bb_fifo *bb_find_solutions(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth);
+bb_fifo *bb_find_solutions_mutex(bb_board *in_board, bb_pawn_state ps, bb_pawn pawn, bb_token token, int depth, pthread_mutex_t *mutex);
 bb_array *bb_winnow_solutions(bb_fifo *solutions);
 
 #endif
