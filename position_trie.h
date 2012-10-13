@@ -14,8 +14,10 @@
 #include "array.h"
 #include "board.h"
 
+typedef unsigned char bb_position_trie_value;
+
 typedef struct {
-	unsigned char value;
+	bb_position_trie_value value;
 	bb_array *trie;
 } bb_position_trie;
 
