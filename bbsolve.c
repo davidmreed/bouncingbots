@@ -55,7 +55,7 @@ int main (int argc, char **argv)
 	char *b;
 	bb_board *board;
 	bb_pawn_state ps;
-	bb_token token;
+	bb_token token = -1;
 	bb_pawn pawn = 0;
 	bb_array *solutions;
 	bb_fifo *fifo;
@@ -88,6 +88,8 @@ int main (int argc, char **argv)
 			usage();
 		}
 	}
+	
+	iferror((token <= 0) || (token > BB_MAX_TOKEN) || (pawn == 0), "Valid token and pawn values are required.");
 	
 	argc -= optind;
 	argv += optind;
