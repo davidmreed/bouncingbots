@@ -30,6 +30,7 @@ void test_boards()
 	bb_pawn_state ps;
 	bb_cell *c;
 	bb_dimension row, col;
+	bb_path *path;
 	
 	/* Testing board layout:
 	   B _ / _ / (reflectors are Red and Green respectively)
@@ -64,6 +65,16 @@ void test_boards()
 	assert((row == 1) && (col == 0));
 	bb_get_pawn_location(ps, BB_PAWN_BLUE, &row, &col);
 	assert((row == 0) && (col == 0));
+	
+	path = bb_path_alloc();
+	bb_get_landing_point(board, ps, BB_PAWN_RED, BB_DIRECTION_RIGHT, &row, &col, path);
+	assert((row == 0) && (col == 2));
+	assert(bb_array_length(path) == 2);
+	bb_path_get_position(path, 0, &row, &col);
+	assert ((row == 1) && (col == 2));
+	bb_path_get_position(path, 1, &row, &col);
+	assert ((row == 0) && (col == 2));
+	bb_path_dealloc(path);
 	
 	bb_apply_move(board, ps, bb_create_move(BB_PAWN_RED, BB_DIRECTION_RIGHT));
 	bb_get_pawn_location(ps, BB_PAWN_RED, &row, &col);

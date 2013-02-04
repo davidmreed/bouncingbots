@@ -164,7 +164,7 @@ void add_states_to_fifo(bb_fifo *fifo, bb_board *board, bb_solution_state *state
 		for (dir = BB_DIRECTION_UP; dir <= BB_DIRECTION_LEFT; dir++) {
 			bb_dimension final_row, final_col;
 			
-			bb_get_landing_point(board, state->ps, p, dir, &final_row, &final_col);
+			bb_get_landing_point(board, state->ps, p, dir, &final_row, &final_col, NULL);
 			
 			if ((final_col != cur_col) || (final_row != cur_row)) {
 				/* This move has an effect on the board */

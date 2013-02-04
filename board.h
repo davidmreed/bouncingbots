@@ -31,6 +31,8 @@ typedef struct {
 
 typedef struct { bb_dimension row, col; } bb_pawn_state[5];
 
+typedef bb_array bb_path;
+
 bb_board *bb_board_alloc(bb_dimension width, bb_dimension height);
 bb_board *bb_board_copy(bb_board *board);
 void bb_board_dealloc(bb_board *board);
@@ -39,7 +41,13 @@ void bb_init_pawn_state(bb_pawn_state ps);
 void bb_copy_pawn_state(bb_pawn_state ps, bb_pawn_state nps);
 bb_bool bb_pawn_states_equal(bb_pawn_state ps, bb_pawn_state nps);
 
-void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col);
+bb_path *bb_path_alloc();
+bb_path *bb_path_copy(bb_path *path);
+void bb_path_dealloc(bb_path *path);
+void bb_path_add_position(bb_path *path, bb_dimension row, bb_dimension col);
+void bb_path_get_position(bb_path *path, bb_index position, bb_dimension *row, bb_dimension *col);
+
+void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col, bb_path *path);
 void bb_move_pawn_to_location(bb_pawn_state ps, bb_pawn pawn, bb_dimension row, bb_dimension col);
 
 void bb_apply_move_set(bb_board *board, bb_pawn_state ps, bb_move_set *set);
