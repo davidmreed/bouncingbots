@@ -93,9 +93,9 @@ void generate_random_position(bb_pawn_state ps)
 	unsigned i;
 	
 	for (i = 0; i < 5; i++) {
-		r = random() & 0x01FF;
+		r = rand() & 0x01FF;
 		ps[i].row = (r >= BB_MAX_DIMENSION) ? BB_NOT_FOUND : r;
-		r = random() & 0x01FF;
+		r = rand() & 0x01FF;
 		ps[i].col = (r >= BB_MAX_DIMENSION) ? BB_NOT_FOUND : r;
 	}
 }
@@ -195,7 +195,7 @@ void test_solver()
 		
 		printf("Found solution ");
 		bb_print_move_set(set);
-		printf(", length %d\n", bb_move_set_length(set));
+		printf(", length %lu\n", bb_move_set_length(set));
 		bb_move_set_dealloc(set);
 	}
 	

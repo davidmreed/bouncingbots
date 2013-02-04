@@ -106,7 +106,7 @@ bb_fifo *bb_find_solutions_mutex(bb_board *in_board, bb_pawn_state ps, bb_pawn p
 						add_states_to_fifo(fifo, board, state, knownpositions);
 				} else {
 #ifdef DEBUG
-					printf("Current depth = %d, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
+					printf("Current depth = %lu, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
 #endif
 					add_states_to_fifo(fifo, board, state, knownpositions);
 				}
@@ -114,7 +114,7 @@ bb_fifo *bb_find_solutions_mutex(bb_board *in_board, bb_pawn_state ps, bb_pawn p
 				/* If we are searching to a set depth, continue if appropriate */
 				if (bb_move_set_length(state->move_sequence) < depth) {
 #ifdef DEBUG
-					printf("Current depth = %d, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
+					printf("Current depth = %lu, max = %d, %lu states.\n", bb_move_set_length(state->move_sequence), depth, (unsigned long)bb_fifo_length(fifo));
 #endif
 					add_states_to_fifo(fifo, board, state, knownpositions);
 				}
