@@ -187,7 +187,7 @@ void add_states_to_fifo(bb_fifo *fifo, bb_board *board, bb_solution_state *state
 
 bb_array *bb_winnow_solutions(bb_fifo *solutions)
 {
-	bb_array *unique_solutions = bb_array_alloc(10);
+	bb_array *unique_solutions = bb_array_alloc(10, sizeof(bb_move_set *));
 	bb_solution_state *state;
 	
 	state = bb_fifo_pop(solutions);
@@ -196,7 +196,7 @@ bb_array *bb_winnow_solutions(bb_fifo *solutions)
 		/* This relies on the FIFO containing solutions in ascending order of length */
 		if (is_unique_solution(state->move_sequence, unique_solutions)) {
 			bb_move_set *set = bb_move_set_copy(state->move_sequence);
-			bb_array_add_item(unique_solutions, set);
+			bb_array_add_item_p(unique_solutions, set);
 		}
 		bb_solution_state_dealloc(state);
 		state = bb_fifo_pop(solutions);
@@ -210,7 +210,7 @@ bb_bool is_unique_solution(bb_move_set *set, bb_array *uniques)
 	bb_index i;
 		
 	for (i = 0; i < bb_array_length(uniques); i++) {
-		if (is_trivial_variant(set, bb_array_get_item(uniques, i))) {
+		if (is_trivial_variant(set, (bb_move_set *)bb_array_get_item_p(uniques, i))) {
 			return BB_FALSE;
 		}
 	}

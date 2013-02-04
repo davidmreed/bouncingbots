@@ -117,7 +117,7 @@ int main (int argc, char **argv)
 	bb_fifo_dealloc(fifo);
 	
 	for (i = 0; i < bb_array_length(solutions); i++) {
-		bb_move_set *set = bb_array_get_item(solutions, i);
+		bb_move_set *set = (bb_move_set *)bb_array_get_item_p(solutions, i);
 		
 		printf("Found solution ");
 		bb_print_move_set(set);

@@ -17,7 +17,7 @@ bb_position_trie *bb_position_trie_alloc()
 	bb_position_trie *trie = calloc(sizeof(bb_position_trie), 1);
 	
 	if (trie != NULL) {
-		trie->trie = bb_array_alloc(1);
+		trie->trie = bb_array_alloc(1, sizeof(bb_position_trie *));
 		
 		if (trie->trie == NULL) {
 			free(trie);
@@ -33,7 +33,7 @@ bb_position_trie *_bb_position_trie_get_element(bb_position_trie *trie, u_int8_t
 	bb_index i;
 	
 	for (i = 0; i < bb_array_length(trie->trie); i++) {
-		bb_position_trie *t = (bb_position_trie *)bb_array_get_item(trie->trie, i);
+		bb_position_trie *t = (bb_position_trie *)bb_array_get_item_p(trie->trie, i);
 		
 		if (t->value == value) {
 			return t;
@@ -90,7 +90,7 @@ void bb_position_trie_add(bb_position_trie *trie, bb_pawn_state ps)
 			next = bb_position_trie_alloc();
 
 			next->value = row;
-			bb_array_add_item(current->trie, next);
+			bb_array_add_item_p(current->trie, next);
 		}
 		
 		current = next; next = NULL;
@@ -103,7 +103,7 @@ void bb_position_trie_add(bb_position_trie *trie, bb_pawn_state ps)
 			next = bb_position_trie_alloc();
 
 			next->value = col;
-			bb_array_add_item(current->trie, next);
+			bb_array_add_item_p(current->trie, next);
 		}
 		current = next; next = NULL;
 	}
@@ -114,7 +114,7 @@ void bb_position_trie_dealloc(bb_position_trie *trie)
 	unsigned i;
 	
 	for (i = 0; i < bb_array_length(trie->trie); i++) {
-		bb_position_trie_dealloc((bb_position_trie *)bb_array_get_item(trie->trie, i));
+		bb_position_trie_dealloc((bb_position_trie *)bb_array_get_item_p(trie->trie, i));
 	}
 	
 	bb_array_dealloc(trie->trie);

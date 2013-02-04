@@ -92,7 +92,7 @@ void generate_random_position(bb_pawn_state ps)
 void test_trie()
 {
 	bb_position_trie *trie = bb_position_trie_alloc();
-	bb_array *array = bb_array_alloc(100000);
+	bb_array *array = bb_array_alloc(100000, sizeof(bb_pawn_state *));
 	bb_index index;
 	bb_pawn_state *ps;
 	
@@ -100,13 +100,13 @@ void test_trie()
 	for (index = 0; index <= 100000; index++) {
 		ps = malloc(sizeof(bb_pawn_state));
 		generate_random_position(*ps);
-		bb_array_add_item(array, ps);
+		bb_array_add_item_p(array, ps);
 		bb_position_trie_add(trie, *ps);
 	}
 	
 	/* Check that each of the known positions returns BB_TRUE */
 	for (index = 0; index <= 100000; index++) {
-		ps = (bb_pawn_state *)bb_array_get_item(array, index);
+		ps = (bb_pawn_state *)bb_array_get_item_p(array, index);
 		
 		assert(bb_position_trie_contains(trie, *ps));
 	}
@@ -119,7 +119,7 @@ void test_trie()
 			bb_index k;
 			bb_bool found = BB_FALSE;
 			for (k = 0; k < bb_array_length(array); k++) {
-				bb_pawn_state *nps = (bb_pawn_state *)bb_array_get_item(array, index);
+				bb_pawn_state *nps = (bb_pawn_state *)bb_array_get_item_p(array, index);
 				
 				found = bb_pawn_states_equal(*ps, *nps);
 				if (found) break;
@@ -131,7 +131,7 @@ void test_trie()
 	
 	/* Deallocate the positions */
 	for (index = 0; index < bb_array_length(array); index++) {
-		ps = (bb_pawn_state *)bb_array_get_item(array, index);
+		ps = (bb_pawn_state *)bb_array_get_item_p(array, index);
 		free(ps);
 	}
 	
@@ -146,7 +146,7 @@ void test_solver()
 	bb_cell *c;
 	bb_fifo *fifo;
 	bb_array *solutions;
-	unsigned i;
+	bb_index i;
 
 	/* Testing board layout:
 	 B _ / _ / (reflectors are Red and Green respectively)
@@ -180,7 +180,7 @@ void test_solver()
 	solutions = bb_winnow_solutions(fifo);
 	
 	for (i = 0; i < bb_array_length(solutions); i++) {
-		bb_move_set *set = bb_array_get_item(solutions, i);
+		bb_move_set *set = (bb_move_set *)bb_array_get_item_p(solutions, i);
 		
 		printf("Found solution ");
 		bb_print_move_set(set);

@@ -10,89 +10,43 @@
 #include "move.h"
 #include <stdlib.h>
 
-bb_move_set *bb_move_set_alloc(unsigned length)
-{
-	bb_move_set *move_set = malloc(sizeof(bb_move_set));
-	
-	if (move_set != NULL) {
-		unsigned len = ((length == 0) ? 10 : length);
-		
-		move_set->moves = malloc(sizeof(bb_move) * len);
-		
-		if (move_set->moves != NULL) {
-			move_set->length = 0; 
-			move_set->allocated = len;
-			return move_set;
-		} else {
-			free(move_set);
-			return NULL;
-		}
-	}
-	
-	return NULL;
+bb_move_set *bb_move_set_alloc()
+{	
+	return bb_array_alloc(10, sizeof(bb_move));
 }
 
 bb_move_set *bb_move_set_copy(bb_move_set *set) 
 {
-	bb_move_set *ns = bb_move_set_alloc(set->length);
-	int i;
-	
-	for (i = 0; i < bb_move_set_length(set); i++) 
-		bb_move_set_add_move(ns, bb_move_set_get_move(set, i));
-		
-	return ns;
+	return bb_array_copy(set);
 }
 
 bb_bool bb_move_sets_equal(bb_move_set *set, bb_move_set *other)
 {
-	if (bb_move_set_length(set) == bb_move_set_length(other)) {
-		int i;
-		for (i = 0; i < bb_move_set_length(set); i++) {
-			bb_move one, two;
-			
-			one = bb_move_set_get_move(set, i);
-			two = bb_move_set_get_move(other, i);
-			
-			if ((one.pawn != two.pawn) || (one.direction != two.direction))
-				return BB_FALSE;
-		}
-		
-		return BB_TRUE;
-	}
-	
-	return BB_FALSE;
+	return bb_array_equal(set, other);
 }
 
 void bb_move_set_dealloc(bb_move_set *set)
 {
-	free(set->moves);
-	free(set);
+	bb_array_dealloc(set);
 }
 
-unsigned bb_move_set_length(bb_move_set *set)
+bb_index bb_move_set_length(bb_move_set *set)
 {
-	return set->length;
+	return bb_array_length(set);
 }
 
-bb_move bb_move_set_get_move(bb_move_set *set, unsigned move)
+bb_move bb_move_set_get_move(bb_move_set *set, bb_index move)
 {
-	bb_move none = {0, 0};
-
-	if (move < set->length)
-		return set->moves[move];
+	bb_move mv;
 	
-	return none;
+	bb_array_get_item(set, move, &mv);
+		
+	return mv;
 }
 
 void bb_move_set_add_move(bb_move_set *set, bb_move move)
 {
-	if (set->allocated < (set->length + 1)) {
-		set->moves = realloc(set->moves, sizeof(bb_move) * (set->allocated + 10));
-		set->allocated += 10;
-	}
-	
-	set->moves[set->length] = move;
-	set->length += 1;
+	bb_array_add_item(set, &move);
 }
 
 bb_move bb_create_move(bb_pawn pawn, bb_direction dir)
