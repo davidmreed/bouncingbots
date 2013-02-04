@@ -76,6 +76,40 @@ void bb_copy_pawn_state(bb_pawn_state ps, bb_pawn_state nps)
 	memcpy(nps, ps, sizeof(bb_pawn_state));
 }
 
+bb_path *bb_path_alloc()
+{
+	return bb_array_alloc(5, sizeof(bb_dimension) * 2);
+}
+
+bb_path *bb_path_copy(bb_path *path)
+{
+	return (bb_path *)bb_array_copy(path);
+}
+
+void bb_path_dealloc(bb_path *path)
+{
+	bb_array_dealloc(path);
+}
+
+void bb_path_add_position(bb_path *path, bb_dimension row, bb_dimension col)
+{
+	bb_dimension pos[2];
+	
+	pos[0] = row; pos[1] = col;
+	
+	bb_array_add_item(path, pos);
+}
+	
+void bb_path_get_position(bb_path *path, bb_index position, bb_dimension *row, bb_dimension *col)
+{
+	bb_dimension pos[2];
+	
+	bb_array_get_item(path, position, (void *)pos);
+	
+	if (row != NULL) *row = pos[0];
+	if (col != NULL) *col = pos[1];
+}
+
 bb_cell *bb_get_cell(bb_board *board, bb_dimension row, bb_dimension col)
 {
 	if ((row > board->height) || (col > board->width)) return NULL;
@@ -147,7 +181,7 @@ bb_bool can_enter_cell_in_direction(bb_cell *cell, bb_direction dir)
 	
 }
 
-void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col)
+void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_direction dir, bb_dimension *out_row, bb_dimension *out_col, bb_path *path)
 {
 	bb_dimension row, col;
 	bb_cell *c;
@@ -170,10 +204,14 @@ void bb_get_landing_point(bb_board *board, bb_pawn_state ps, bb_pawn pawn, bb_di
 		
 		/* Go ahead and move the pawn to the reflector location */
 		bb_move_pawn_to_location(nps, pawn, row, col);
+		if (path != NULL) bb_path_add_position(path, row, col);
 		
-		bb_get_landing_point(board, nps, pawn, reflect(c, dir), &row, &col);
+		bb_get_landing_point(board, nps, pawn, reflect(c, dir), &row, &col, path);
+	} else {
+		if (path != NULL) bb_path_add_position(path, row, col);
+
 	}
-	
+
 	*out_col = col;
 	*out_row = row;
 }
@@ -373,6 +411,6 @@ void bb_apply_move(bb_board *board, bb_pawn_state ps, bb_move move)
 {
 	bb_dimension final_row, final_col;
 	
-	bb_get_landing_point(board, ps, move.pawn, move.direction, &final_row, &final_col);
+	bb_get_landing_point(board, ps, move.pawn, move.direction, &final_row, &final_col, NULL);
 	bb_move_pawn_to_location(ps, move.pawn, final_row, final_col);
 }
