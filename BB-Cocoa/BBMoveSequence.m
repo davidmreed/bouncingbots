@@ -10,6 +10,7 @@
 #import "BBMove.h"
 #import "BBCocoaPrivate.h"
 #import "../move.h"
+#import "../strings.h"
 
 @implementation BBMoveSequence
 
@@ -106,6 +107,26 @@
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
 {
 	[NSException raise:NSInternalInconsistencyException format:@"BBMoveSequences do not support mutation."];
+}
+
+- (NSString *)description
+{
+	return self.stringValue;
+}
+
+- (NSString *)stringValue
+{
+	unsigned char *str;
+	NSString *ret = nil;
+	
+	bb_create_string_from_move_set(_ms, &str);
+	
+	if (str != NULL) {
+		ret = [NSString stringWithCString:(char *)str encoding:NSASCIIStringEncoding];
+		free(str);
+	}
+	
+	return ret;
 }
 
 - (void)dealloc

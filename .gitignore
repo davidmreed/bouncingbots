@@ -1,0 +1,14 @@
+syntax: glob
+win/bin/
+win/obj/
+win/*.depend
+win/*.layout
+*.mode2v3
+*.pbxuser
+*.cbTemp
+*.depend
+*.layout
+linux/bin
+linux/obj
+*.a
+.DS_Store

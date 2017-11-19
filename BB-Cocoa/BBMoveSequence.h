@@ -13,4 +13,6 @@
 	bb_move_set *_ms;
 }
 
+- (NSString *)stringValue;
+
 @end

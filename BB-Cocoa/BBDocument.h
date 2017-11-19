@@ -8,16 +8,29 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "BBBoard.h"
 
-@class BBBoardView, BBBoard;
+@class BBBoardView;
 
-@interface BBDocument : NSDocument
+@interface BBDocument : NSDocument <BBBoardSolverDelegate>
 {
 	BBBoard *board;
+	NSArray *solutions;
+	bb_pawn pawn;
+	bb_token token;
 	IBOutlet BBBoardView *view;
-	IBOutlet NSPanel *cellInspector;
+	IBOutlet NSDrawer *cellDrawer;
+	IBOutlet NSArrayController *solutionsArrayController;
 }
 
+@property (readwrite, copy) BBBoard *board;
+@property (readwrite) bb_pawn pawn;
+@property (readwrite) bb_token token;
+@property (readwrite, copy) NSArray *solutions;
+
 - (IBAction)showCellInspector:(id)sender;
+- (IBAction)showSolution:(id)sender;
+- (IBAction)applySolution:(id)sender;
+- (IBAction)solve:(id)sender;
 
 @end

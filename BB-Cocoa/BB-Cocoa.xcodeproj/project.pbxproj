@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		1DDD582C0DA1D0D100B32029 /* BBDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* BBDocument.xib */; };
 		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		63387D2515BB3E50008796D6 /* BBMoveSetToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 63387D2415BB3E50008796D6 /* BBMoveSetToStringTransformer.m */; };
 		6377040015A9637B007DC2C4 /* BBMoveSequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 637703FF15A9637B007DC2C4 /* BBMoveSequence.m */; };
 		6377040415A964B6007DC2C4 /* BBMove.m in Sources */ = {isa = PBXBuildFile; fileRef = 6377040315A964B6007DC2C4 /* BBMove.m */; };
 		637704DF15AA444A007DC2C4 /* BBBoardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 637704DE15AA444A007DC2C4 /* BBBoardView.m */; };
 		6377055B15AA9D45007DC2C4 /* libbouncingbots.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6377052615AA9205007DC2C4 /* libbouncingbots.a */; };
+		6383D2DE16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6383D2DD16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.m */; };
 		638AA7D4158559D9005EB279 /* BBBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 638AA7D3158559D9005EB279 /* BBBoard.m */; };
 		638AA7D715855A2E005EB279 /* BBCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 638AA7D615855A2E005EB279 /* BBCell.m */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
@@ -63,6 +65,8 @@
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		63387D2315BB3E50008796D6 /* BBMoveSetToStringTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBMoveSetToStringTransformer.h; sourceTree = "<group>"; };
+		63387D2415BB3E50008796D6 /* BBMoveSetToStringTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBMoveSetToStringTransformer.m; sourceTree = "<group>"; };
 		637703FE15A9637B007DC2C4 /* BBMoveSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBMoveSequence.h; sourceTree = "<group>"; };
 		637703FF15A9637B007DC2C4 /* BBMoveSequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBMoveSequence.m; sourceTree = "<group>"; };
 		6377040215A964B6007DC2C4 /* BBMove.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBMove.h; sourceTree = "<group>"; };
@@ -70,6 +74,8 @@
 		637704DD15AA444A007DC2C4 /* BBBoardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBBoardView.h; sourceTree = "<group>"; };
 		637704DE15AA444A007DC2C4 /* BBBoardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBBoardView.m; sourceTree = "<group>"; };
 		6377051D15AA9205007DC2C4 /* bouncingbots.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = bouncingbots.xcodeproj; path = ../bouncingbots.xcodeproj; sourceTree = SOURCE_ROOT; };
+		6383D2DC16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSolveButtonTitleValueTransformer.h; sourceTree = "<group>"; };
+		6383D2DD16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSolveButtonTitleValueTransformer.m; sourceTree = "<group>"; };
 		638AA7D2158559D9005EB279 /* BBBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBBoard.h; sourceTree = "<group>"; };
 		638AA7D3158559D9005EB279 /* BBBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBBoard.m; sourceTree = "<group>"; };
 		638AA7D515855A2E005EB279 /* BBCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBCell.h; sourceTree = "<group>"; };
@@ -147,6 +153,10 @@
 				2A37F4ACFDCFA73011CA2CEA /* BBDocument.m */,
 				637704DD15AA444A007DC2C4 /* BBBoardView.h */,
 				637704DE15AA444A007DC2C4 /* BBBoardView.m */,
+				6383D2DC16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.h */,
+				6383D2DD16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.m */,
+				63387D2315BB3E50008796D6 /* BBMoveSetToStringTransformer.h */,
+				63387D2415BB3E50008796D6 /* BBMoveSetToStringTransformer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -290,6 +300,8 @@
 				6377040015A9637B007DC2C4 /* BBMoveSequence.m in Sources */,
 				6377040415A964B6007DC2C4 /* BBMove.m in Sources */,
 				637704DF15AA444A007DC2C4 /* BBBoardView.m in Sources */,
+				63387D2515BB3E50008796D6 /* BBMoveSetToStringTransformer.m in Sources */,
+				6383D2DE16140F14007EAEC4 /* BBSolveButtonTitleValueTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -257,7 +257,7 @@
 - (void)dealloc
 {
 	self.selectedCell = nil;
-	[board release];
+	self.board = nil;
 	[super dealloc];
 }
 

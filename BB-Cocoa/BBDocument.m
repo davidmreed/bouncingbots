@@ -12,19 +12,21 @@
 
 @implementation BBDocument
 
+@synthesize pawn, token, solutions, board;
+
 - (id)init
 {
     self = [super init];
     if (self) {
 		board = [[BBBoard alloc] initWithSize:NSMakeSize(16, 16)];
+		pawn = BB_PAWN_RED;
+		token = 0;
     }
     return self;
 }
 
 - (NSString *)windowNibName
 {
-    // Override returning the nib file name of the document
-    // If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
     return @"BBDocument";
 }
 
@@ -37,7 +39,49 @@
 
 - (IBAction)showCellInspector:(id)sender
 {
-	[cellInspector orderFront:sender];
+	[cellDrawer open];
+}
+
+- (IBAction)showSolution:(id)sender
+{
+}
+
+- (IBAction)applySolution:(id)sender
+{
+}
+
+- (IBAction)solve:(id)sender
+{
+	self.solutions = nil;
+
+	// if a solution is already in progress, cancel.
+	if (self.board.asynchronousSolutionInProgress)
+		[board cancelAsynchronousSolution];
+	else 
+		[board beginAsynchronousSolveWithDelegate:self forPawn:self.pawn token:self.token];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
+{
+	if ([anItem action] == @selector(solve:)) {
+		return (self.token != 0);
+	}
+	
+	return [super validateUserInterfaceItem:anItem];
+}
+
+- (void)board:(BBBoard *)board foundSolutions:(NSArray *)newSolutions forPawn:(bb_pawn)pawn token:(bb_token)token
+{
+	self.solutions = newSolutions;
+}
+
+- (void)board:(BBBoard *)board didEncounterError:(NSString *)error
+{
+	NSBeginAlertSheet(NSLocalizedString(@"Error occured during solution.", nil), NSLocalizedString(@"OK", nil), nil, nil, [self windowForSheet], nil, NULL, NULL, NULL, NSLocalizedString(@"While attempting to solve the board, BouncingBots encountered the following error:\n%@", nil), error);
+}
+
+- (void)boardDidCancelSolution:(BBBoard *)board
+{
 }
 
 - (BOOL)writeToURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
@@ -47,8 +91,7 @@
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
-	[board release];
-	board = [[BBBoard alloc] initWithContentsOfURL:absoluteURL];
+	self.board = [[[BBBoard alloc] initWithContentsOfURL:absoluteURL] autorelease];
 	
 	view.board = board;
 	
@@ -57,7 +100,8 @@
 
 - (void)dealloc
 {
-	[board release];
+	self.solutions = nil;
+	self.board = nil;
 	[super dealloc];
 }
 
